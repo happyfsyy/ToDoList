@@ -1,8 +1,12 @@
 package com.example.todolist.activity;
 
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.example.todolist.R;
@@ -14,13 +18,14 @@ import java.util.ArrayList;
 import java.util.List;
 
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.ActionBar;
+import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-public class ListActivity extends BaseActivity implements View.OnClickListener {
-    private TextView dateTextView;
-    private ImageView emotionImgView;
-    private ImageView addImageView;
+public class ListActivity extends BaseActivity{
+    private Toolbar toolbar;
+    private LinearLayout dateLayout;
     private RecyclerView recyclerView;
     private ListAdapter adapter;
     private List<ListItem> dataList=new ArrayList<>();
@@ -32,18 +37,31 @@ public class ListActivity extends BaseActivity implements View.OnClickListener {
         initViews();
     }
     private void initViews(){
-        dateTextView=findViewById(R.id.list_date);
-        emotionImgView=findViewById(R.id.list_emotion);
-        addImageView=findViewById(R.id.list_add);
+        toolbar=findViewById(R.id.list_toolbar);
+        dateLayout=findViewById(R.id.list_date_layout);
         recyclerView=findViewById(R.id.list_recycler_view);
 
-        dateTextView.setOnClickListener(this);
-        addImageView.setOnClickListener(this);
-        initEmotion();
+        initToolbar();
+        initDateLayout();
         initRecyclerView();
     }
-    private void initEmotion(){
-        //todo 获取Preference当天的状况来设置emotion的图片
+    private void initToolbar(){
+        setSupportActionBar(toolbar);
+        ActionBar actionBar=getSupportActionBar();
+        if(actionBar!=null){
+            actionBar.setDisplayHomeAsUpEnabled(false);
+            actionBar.setDisplayShowTitleEnabled(false);
+        }
+    }
+    private void initDateLayout(){
+        dateLayout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                ToastUtil.showToast("跳转到日历界面");
+            }
+        });
+        //todo 获取当前日期
+        //todo 根据数据库获取当天的状况来设置emotion的图片
     }
     private void initRecyclerView(){
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
@@ -53,8 +71,8 @@ public class ListActivity extends BaseActivity implements View.OnClickListener {
 
     }
     private void initDataList(){
-        //todo 根据SharedPreference获取当天的数据情况，这里暂时生成10个空的数据试试看
-        for(int i=0;i<10;i++){
+        //todo 根据数据库获取当天的数据情况，这里暂时生成10个空的数据试试看
+        for(int i=0;i<1;i++){
             dataList.add(createEmptyItem());
         }
     }
@@ -63,12 +81,18 @@ public class ListActivity extends BaseActivity implements View.OnClickListener {
     }
 
     @Override
-    public void onClick(View v) {
-        int viewId=v.getId();
-        if(viewId==dateTextView.getId()){
-            ToastUtil.showToast("进入日历界面");
-        }else if(viewId==addImageView.getId()){
-            ToastUtil.showToast("添加一个item");
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.list_menu,menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()){
+            case R.id.list_settings:
+                ToastUtil.showToast("跳转到闹钟设置界面");
+                break;
         }
+        return true;
     }
 }

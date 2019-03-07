@@ -12,19 +12,43 @@
         android:src="@drawable/emotion1"
         android:layout_gravity="center_vertical"
         />
-    <EditText
-        android:id="@+id/item_content"
+    <LinearLayout
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_weight="1"
-        android:singleLine="true"
-        />
+        android:paddingStart="@dimen/default_inner_padding"
+        android:paddingEnd="@dimen/default_inner_padding"
+        android:orientation="vertical">
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+            <EditText
+                android:id="@+id/item_content_edit"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:singleLine="true"
+                android:imeOptions="actionNext"
+                android:background="@android:color/transparent"
+                />
+            <TextView
+                android:id="@+id/item_content_text"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:singleLine="true"
+                android:visibility="gone"
+                android:layout_marginStart="@dimen/default_margin"/>
+        </LinearLayout>
+        <include layout="@layout/horizontal_line"
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_marginTop="2dp"/>
+    </LinearLayout>
     <ImageView
         android:id="@+id/item_status"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:src="@drawable/emotion1"
-        android:layout_marginStart="@dimen/small_margin"
         android:padding="@dimen/default_inner_padding"
         android:layout_gravity="center_vertical"
         />
@@ -35,13 +59,13 @@
         android:padding="@dimen/default_inner_padding"
         android:src="@drawable/emotion1"
         android:layout_gravity="center_vertical"
-        android:visibility="gone"/>
+        android:visibility="gone"
+        />
     <ImageView
         android:id="@+id/item_unfinish"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:src="@drawable/emotion1"
-        android:layout_marginStart="@dimen/small_margin"
         android:padding="@dimen/default_inner_padding"
         android:layout_gravity="center_vertical"
         android:visibility="gone"/>
