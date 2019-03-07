@@ -1,6 +1,11 @@
 package com.example.todolist.adapter;
 
+import android.animation.LayoutTransition;
 import android.content.Context;
+import android.text.Editable;
+import android.text.TextUtils;
+import android.text.TextWatcher;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -10,8 +15,11 @@ import android.widget.TextView;
 
 import com.example.todolist.R;
 import com.example.todolist.bean.ListItem;
-import com.example.todolist.utils.ToastUtil;
+import com.example.todolist.listener.OnBackPressListener;
+import com.example.todolist.listener.OnClickListener;
+import com.example.todolist.listener.OnNextListener;
 import com.example.todolist.bean.ListItem.ItemStatus;
+import com.example.todolist.listener.OnTextChangeListener;
 
 import java.util.List;
 
@@ -19,16 +27,14 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 public class ListAdapter extends RecyclerView.Adapter<ListAdapter.ViewHolder> {
-    class ViewHolder extends RecyclerView.ViewHolder{
-        EditText content_edit;
-        TextView content_text;
-        ImageView status;
-        ImageView finish;
-        ImageView unFinish;
+    public static class ViewHolder extends RecyclerView.ViewHolder{
+        public ImageView status;
+        public EditText content_edit;
+        public ImageView finish;
+        public ImageView unFinish;
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
             this.content_edit=itemView.findViewById(R.id.item_content_edit);
-            this.content_text=itemView.findViewById(R.id.item_content_text);
             this.status=itemView.findViewById(R.id.item_status);
             this.finish=itemView.findViewById(R.id.item_finish);
             this.unFinish=itemView.findViewById(R.id.item_unfinish);
@@ -36,66 +42,142 @@ public class ListAdapter extends RecyclerView.Adapter<ListAdapter.ViewHolder> {
     }
     private List<ListItem> dataList;
     private Context context;
+    private LayoutTransition mTransitioner;
+    private OnClickListener onFinishListener;
+    private OnClickListener onUnFinishListener;
+    private OnNextListener onNextListener;
+    private OnTextChangeListener onTextChangeListener;
+    private OnBackPressListener onBackPressListener;
     public ListAdapter(List<ListItem> dataList){
         this.dataList=dataList;
+        mTransitioner=new LayoutTransition();
     }
-
+    public void setOnFinishListener(OnClickListener onFinishListener){
+        this.onFinishListener=onFinishListener;
+    }
+    public void setOnUnFinishListener(OnClickListener onUnFinishListener){
+        this.onUnFinishListener=onUnFinishListener;
+    }
+    public void setOnNextListener(OnNextListener onNextListener){
+        this.onNextListener=onNextListener;
+    }
+    public void setOnTextChangeListener(OnTextChangeListener onTextChangeListener){
+        this.onTextChangeListener = onTextChangeListener;
+    }
+    public void setOnBackPressListener(OnBackPressListener onBackPressListener){
+        this.onBackPressListener=onBackPressListener;
+    }
     @NonNull
     @Override
-    public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+    public ViewHolder onCreateViewHolder(@NonNull final ViewGroup parent, final int viewType) {
         if(context==null){
             context=parent.getContext();
         }
         View itemView= LayoutInflater.from(context).inflate(R.layout.list_item,parent,false);
-        ViewHolder viewHolder=new ViewHolder(itemView);
+        final ViewHolder viewHolder=new ViewHolder(itemView);
+        ((ViewGroup)viewHolder.itemView).setLayoutTransition(mTransitioner);
+        initEditListener(viewHolder);
+        initButtonListener(viewHolder);
+        return viewHolder;
+    }
+    private void initEditListener(final ViewHolder viewHolder){
+        viewHolder.content_edit.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+            }
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+            }
+            @Override
+            public void afterTextChanged(Editable s) {
+                if(!TextUtils.isEmpty(s.toString())){
+                    viewHolder.finish.setVisibility(View.VISIBLE);
+                    viewHolder.unFinish.setVisibility(View.VISIBLE);
+                }else{
+                    viewHolder.finish.setVisibility(View.INVISIBLE);
+                    viewHolder.unFinish.setVisibility(View.INVISIBLE);
+                }
+                int pos=viewHolder.getAdapterPosition();
+                onTextChangeListener.onTextChange(s,pos);
+            }
+        });
+        viewHolder.content_edit.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+            @Override
+            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+                int pos=viewHolder.getAdapterPosition();
+                onNextListener.onNext(pos);
+                return true;
+            }
+        });
+        viewHolder.content_edit.setOnKeyListener(new View.OnKeyListener() {
+            @Override
+            public boolean onKey(View v, int keyCode, KeyEvent event) {
+                if(event.getAction()==KeyEvent.ACTION_DOWN&&
+                    event.getKeyCode()==KeyEvent.KEYCODE_DEL){
+                    EditText editText=(EditText)v;
+                    onBackPressListener.onBackPress(editText,viewHolder.getAdapterPosition());
+                }
+                return false;
+            }
+        });
+    }
+    private void initButtonListener(final ViewHolder viewHolder){
         viewHolder.finish.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                ToastUtil.showToast("点击了完成按钮");
+                int pos=viewHolder.getAdapterPosition();
+                onFinishListener.onClick(v,pos);
             }
         });
         viewHolder.unFinish.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                ToastUtil.showToast("点击了未完成按钮");
+                int pos=viewHolder.getAdapterPosition();
+                onUnFinishListener.onClick(v,pos);
             }
         });
-        //todo 监听editText，输入完成之后（或者失去焦点之后），右侧显示出Finish和UnFinish，当心convertView复用，editText焦点判断不准确
-        return viewHolder;
     }
-
     @Override
-    public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull final ViewHolder holder, int position) {
         ItemStatus status=dataList.get(position).getStatus();
         String content=dataList.get(position).getContent();
+        if(position==dataList.size()-1){
+            if(status==ItemStatus.NO_CONTENT||status==ItemStatus.NO_RECORD){
+                holder.content_edit.requestFocus();
+                if(content!=null){
+                    holder.content_edit.setSelection(content.length());
+                }else{
+                    holder.content_edit.setSelection(0);
+                }
+            }
+        }else{
+            //todo 这里的focus问题，到底咋整
+            holder.content_edit.clearFocus();
+        }
         switch (status){
             case NO_CONTENT:
-                //todo 判断你是不是当前第一个no_content，如果是的话，就editText可以编辑，否则就是个TextView
                 holder.content_edit.setText("");
-                if(position!=0){
-                    holder.content_edit.setFocusable(false);
-                }
-                holder.status.setVisibility(View.INVISIBLE);
-                holder.finish.setVisibility(View.GONE);
-                holder.unFinish.setVisibility(View.GONE);
+                holder.finish.setVisibility(View.INVISIBLE);
+                holder.unFinish.setVisibility(View.INVISIBLE);
                 break;
             case NO_RECORD:
                 holder.content_edit.setText(content);
-                holder.status.setVisibility(View.GONE);
                 holder.finish.setVisibility(View.VISIBLE);
                 holder.unFinish.setVisibility(View.VISIBLE);
                 break;
             case FINISH:
                 holder.content_edit.setText(content);
+                holder.content_edit.setFocusable(false);
                 //todo holder.status.setResources() 完成按钮
-                holder.finish.setVisibility(View.GONE);
-                holder.unFinish.setVisibility(View.GONE);
+                holder.finish.setVisibility(View.INVISIBLE);
+                holder.unFinish.setVisibility(View.INVISIBLE);
                 break;
             case UNFINISH:
                 holder.content_edit.setText(content);
+                holder.content_edit.setFocusable(false);
                 //todo holder.status.setResources() 未完成按钮
-                holder.finish.setVisibility(View.GONE);
-                holder.unFinish.setVisibility(View.GONE);
+                holder.finish.setVisibility(View.INVISIBLE);
+                holder.unFinish.setVisibility(View.INVISIBLE);
                 break;
         }
     }

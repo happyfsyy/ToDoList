@@ -1,17 +1,22 @@
 package com.example.todolist.activity;
 
-import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextUtils;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.ImageView;
+import android.widget.EditText;
 import android.widget.LinearLayout;
-import android.widget.TextView;
 
 import com.example.todolist.R;
 import com.example.todolist.adapter.ListAdapter;
 import com.example.todolist.bean.ListItem;
+import com.example.todolist.listener.OnBackPressListener;
+import com.example.todolist.listener.OnClickListener;
+import com.example.todolist.listener.OnNextListener;
+import com.example.todolist.listener.OnTextChangeListener;
+import com.example.todolist.utils.SoftKeyboardUtil;
 import com.example.todolist.utils.ToastUtil;
 
 import java.util.ArrayList;
@@ -20,6 +25,7 @@ import java.util.List;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.widget.Toolbar;
+import androidx.recyclerview.widget.DefaultItemAnimator;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -68,16 +74,126 @@ public class ListActivity extends BaseActivity{
         initDataList();
         adapter=new ListAdapter(dataList);
         recyclerView.setAdapter(adapter);
+        recyclerView.setItemAnimator(new DefaultItemAnimator());
+        adapter.setOnFinishListener(new OnClickListener() {
+            @Override
+            public void onClick(View view, int position) {
+                markStatus(position, ListItem.ItemStatus.FINISH);
+                addEmptyItem(position);
+            }
+        });
+        adapter.setOnUnFinishListener(new OnClickListener() {
+            @Override
+            public void onClick(View view, int position) {
+                markStatus(position, ListItem.ItemStatus.UNFINISH);
+                addEmptyItem(position);
+            }
+        });
+        adapter.setOnNextListener(new OnNextListener() {
+            @Override
+            public void onNext(int pos) {
+                if (!TextUtils.isEmpty(dataList.get(pos).getContent())) {
+                    if (isLastItem(pos)) {
+                        addEmptyItem(pos);
+                        //todo 这里要不要隐藏软键盘
+                    } else {
+                        //todo 向下寻找focus的editText，向上寻找focus的editText
+//                    for(int i=pos+1;i<dataList.size();i++){
+//                        if(dataList.get(i).getStatus()== ListItem.ItemStatus.NO_CONTENT||
+//                            dataList.get(i).getStatus()==ListItem.ItemStatus.NO_RECORD){
+//                            String content=dataList.get(i).getContent();
+//                            ListAdapter.ViewHolder viewHolder=(ListAdapter.ViewHolder)recyclerView.findContainingViewHolder(recyclerView.getChildAt(i));
+//                            viewHolder.content_edit.requestFocus();
+//                            if(content==null){
+//                                viewHolder.content_edit.setSelection(0);
+//                            }else{
+//                                viewHolder.content_edit.setSelection(content.length());
+//                            }
+//                            SoftKeyboardUtil.hideKeyboard(ListActivity.this);
+//                            break;
+//                        }
+//                    }
+                    }
+                }
+            }
+        });
+        adapter.setOnTextChangeListener(new OnTextChangeListener() {
+            @Override
+            public void onTextChange(Editable s, int pos) {
+                if(!TextUtils.isEmpty(s.toString())){
+                    //todo 这里的dataList与ListAdapter中的dataList不一致怎么办
+                    dataList.get(pos).setStatus(ListItem.ItemStatus.NO_RECORD);
+                    dataList.get(pos).setContent(s.toString());
+                    //todo 对数据库中数据进行更新
+                }else{
+                    dataList.get(pos).setStatus(ListItem.ItemStatus.NO_CONTENT);
+                    dataList.get(pos).setContent("");
+                    //todo 对数据库中数据进行更新
+                }
+            }
+        });
+        adapter.setOnBackPressListener(new OnBackPressListener() {
+            @Override
+            public void onBackPress(EditText editText, int pos) {
+                int startSelection=editText.getSelectionStart();
+                if(startSelection==0){
+                    dataList.remove(pos);
+                    adapter.notifyItemRemoved(pos);
+                    //todo 对数据库中数据进行更新
+                }
+            }
+        });
 
     }
     private void initDataList(){
-        //todo 根据数据库获取当天的数据情况，这里暂时生成10个空的数据试试看
+//        ListItem item=new ListItem("dd", ListItem.ItemStatus.FINISH);
+//        ListItem item1=new ListItem("dd1", ListItem.ItemStatus.FINISH);
+//        ListItem item2=new ListItem("dd2", ListItem.ItemStatus.FINISH);
+//        ListItem item3=new ListItem("dd3", ListItem.ItemStatus.FINISH);
+//        ListItem item4=new ListItem("dd4", ListItem.ItemStatus.FINISH);
+//        ListItem item5=new ListItem("dd5", ListItem.ItemStatus.FINISH);
+//        ListItem item6=new ListItem("dd6", ListItem.ItemStatus.FINISH);
+//        dataList.add(item);dataList.add(item2);dataList.add(item1);
+//        dataList.add(item3);dataList.add(item4);dataList.add(item5);dataList.add(item6);
+//        ListItem item7=createEmptyItem();dataList.add(item7);
         for(int i=0;i<1;i++){
-            dataList.add(createEmptyItem());
+            ListItem item=createEmptyItem();
+            dataList.add(item);
         }
     }
-    private ListItem createEmptyItem(){
+    public static ListItem createEmptyItem(){
         return new ListItem(null, ListItem.ItemStatus.NO_CONTENT);
+    }
+
+    /**
+     * 判断当前是不是最后一项
+     * @param pos
+     */
+    private boolean isLastItem(int pos){
+        return pos==dataList.size()-1;
+    }
+    /**
+     * 如果当前是最后一项，就增加一个item
+     * @param pos
+     */
+    private void addEmptyItem(int pos){
+        if(isLastItem(pos)){
+            ListItem listItem= ListActivity.createEmptyItem();
+            dataList.add(listItem);
+            //todo 对数据库中数据进行更新
+            adapter.notifyItemInserted(dataList.size()-1);
+        }
+    }
+
+    /**
+     * 标记当前项的状态，完成/未完成
+     * @param pos
+     * @param status
+     */
+    private void markStatus(int pos, ListItem.ItemStatus status){
+        dataList.get(pos).setStatus(status);
+        //todo 对数据库中数据进行更新
+        adapter.notifyItemChanged(pos);
     }
 
     @Override
