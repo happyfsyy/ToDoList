@@ -6,6 +6,7 @@ import android.text.TextUtils;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.CursorAdapter;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 
@@ -18,6 +19,7 @@ import com.example.todolist.listener.OnNextListener;
 import com.example.todolist.listener.OnTextChangeListener;
 import com.example.todolist.utils.SoftKeyboardUtil;
 import com.example.todolist.utils.ToastUtil;
+import com.google.android.material.snackbar.Snackbar;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -98,21 +100,25 @@ public class ListActivity extends BaseActivity{
                         //todo 这里要不要隐藏软键盘
                     } else {
                         //todo 向下寻找focus的editText，向上寻找focus的editText
-//                    for(int i=pos+1;i<dataList.size();i++){
-//                        if(dataList.get(i).getStatus()== ListItem.ItemStatus.NO_CONTENT||
-//                            dataList.get(i).getStatus()==ListItem.ItemStatus.NO_RECORD){
-//                            String content=dataList.get(i).getContent();
-//                            ListAdapter.ViewHolder viewHolder=(ListAdapter.ViewHolder)recyclerView.findContainingViewHolder(recyclerView.getChildAt(i));
-//                            viewHolder.content_edit.requestFocus();
-//                            if(content==null){
-//                                viewHolder.content_edit.setSelection(0);
-//                            }else{
-//                                viewHolder.content_edit.setSelection(content.length());
-//                            }
-//                            SoftKeyboardUtil.hideKeyboard(ListActivity.this);
-//                            break;
-//                        }
-//                    }
+                        int firstPos=((LinearLayoutManager)recyclerView.getLayoutManager()).findFirstVisibleItemPosition();
+                        int childCount=recyclerView.getChildCount();
+                        for(int i=pos-firstPos+1;i<childCount;i++){
+                            //这里的i是真实的可见的realPos
+                            if(dataList.get(i+firstPos).getStatus()== ListItem.ItemStatus.NO_CONTENT||
+                                    dataList.get(i+firstPos).getStatus()==ListItem.ItemStatus.NO_RECORD){
+                                String content=dataList.get(i+firstPos).getContent();
+                                View itemView=recyclerView.getChildAt(i);
+                                ListAdapter.ViewHolder viewHolder=(ListAdapter.ViewHolder)recyclerView.getChildViewHolder(itemView);
+                                viewHolder.content_edit.requestFocus();
+                                if(content==null){
+                                    viewHolder.content_edit.setSelection(0);
+                                }else{
+                                    viewHolder.content_edit.setSelection(content.length());
+                                }
+//                                SoftKeyboardUtil.hideKeyboard(ListActivity.this);
+                                break;
+                            }
+                        }
                     }
                 }
             }
@@ -120,12 +126,24 @@ public class ListActivity extends BaseActivity{
         adapter.setOnTextChangeListener(new OnTextChangeListener() {
             @Override
             public void onTextChange(Editable s, int pos) {
+                ListAdapter.ViewHolder viewHolder=(ListAdapter.ViewHolder)recyclerView.findViewHolderForAdapterPosition(pos);
                 if(!TextUtils.isEmpty(s.toString())){
                     //todo 这里的dataList与ListAdapter中的dataList不一致怎么办
-                    dataList.get(pos).setStatus(ListItem.ItemStatus.NO_RECORD);
-                    dataList.get(pos).setContent(s.toString());
+                    if(viewHolder!=null){
+                        viewHolder.finish.setVisibility(View.VISIBLE);
+                        viewHolder.unFinish.setVisibility(View.VISIBLE);
+                    }
+                    if(dataList.get(pos).getStatus()== ListItem.ItemStatus.NO_RECORD||
+                        dataList.get(pos).getStatus()==ListItem.ItemStatus.NO_CONTENT){
+                        dataList.get(pos).setStatus(ListItem.ItemStatus.NO_RECORD);
+                        dataList.get(pos).setContent(s.toString());
+                    }
                     //todo 对数据库中数据进行更新
                 }else{
+                    if(viewHolder!=null){
+                        viewHolder.finish.setVisibility(View.INVISIBLE);
+                        viewHolder.unFinish.setVisibility(View.INVISIBLE);
+                    }
                     dataList.get(pos).setStatus(ListItem.ItemStatus.NO_CONTENT);
                     dataList.get(pos).setContent("");
                     //todo 对数据库中数据进行更新
@@ -137,9 +155,35 @@ public class ListActivity extends BaseActivity{
             public void onBackPress(EditText editText, int pos) {
                 int startSelection=editText.getSelectionStart();
                 if(startSelection==0){
+                    //todo 如果list只有一项，那么不能删除
+                    //todo 如果只有这一项是no_record，也不能删除
+                    if(pos-1>=0){
+                        String curContent=dataList.get(pos).getContent();
+                        ListItem.ItemStatus preStatus=dataList.get(pos-1).getStatus();
+                        String preContent=dataList.get(pos-1).getContent();
+                        if(preStatus== ListItem.ItemStatus.NO_CONTENT||
+                                preStatus== ListItem.ItemStatus.NO_RECORD){
+                            String content=preContent+curContent;
+                            dataList.get(pos-1).setContent(content);
+                            dataList.get(pos-1).setStatus(ListItem.ItemStatus.NO_RECORD);
+                            adapter.notifyItemChanged(pos-1);
+
+                            //todo 更新数据库
+                        }
+                    }
                     dataList.remove(pos);
                     adapter.notifyItemRemoved(pos);
                     //todo 对数据库中数据进行更新
+
+                    Snackbar.make(recyclerView,"已删除当前项",Snackbar.LENGTH_SHORT)
+                            .setAction("撤销删除", new View.OnClickListener() {
+                                @Override
+                                public void onClick(View v) {
+                                    //todo 撤销删除
+                                    ToastUtil.showToast("撤销删除太麻烦");
+
+                                }
+                            }).show();
                 }
             }
         });

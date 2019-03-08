@@ -20,6 +20,7 @@ import com.example.todolist.listener.OnClickListener;
 import com.example.todolist.listener.OnNextListener;
 import com.example.todolist.bean.ListItem.ItemStatus;
 import com.example.todolist.listener.OnTextChangeListener;
+import com.example.todolist.utils.LogUtil;
 
 import java.util.List;
 
@@ -90,13 +91,6 @@ public class ListAdapter extends RecyclerView.Adapter<ListAdapter.ViewHolder> {
             }
             @Override
             public void afterTextChanged(Editable s) {
-                if(!TextUtils.isEmpty(s.toString())){
-                    viewHolder.finish.setVisibility(View.VISIBLE);
-                    viewHolder.unFinish.setVisibility(View.VISIBLE);
-                }else{
-                    viewHolder.finish.setVisibility(View.INVISIBLE);
-                    viewHolder.unFinish.setVisibility(View.INVISIBLE);
-                }
                 int pos=viewHolder.getAdapterPosition();
                 onTextChangeListener.onTextChange(s,pos);
             }
@@ -141,27 +135,16 @@ public class ListAdapter extends RecyclerView.Adapter<ListAdapter.ViewHolder> {
     public void onBindViewHolder(@NonNull final ViewHolder holder, int position) {
         ItemStatus status=dataList.get(position).getStatus();
         String content=dataList.get(position).getContent();
-        if(position==dataList.size()-1){
-            if(status==ItemStatus.NO_CONTENT||status==ItemStatus.NO_RECORD){
-                holder.content_edit.requestFocus();
-                if(content!=null){
-                    holder.content_edit.setSelection(content.length());
-                }else{
-                    holder.content_edit.setSelection(0);
-                }
-            }
-        }else{
-            //todo 这里的focus问题，到底咋整
-            holder.content_edit.clearFocus();
-        }
         switch (status){
             case NO_CONTENT:
                 holder.content_edit.setText("");
+                holder.content_edit.setFocusable(true);
                 holder.finish.setVisibility(View.INVISIBLE);
                 holder.unFinish.setVisibility(View.INVISIBLE);
                 break;
             case NO_RECORD:
                 holder.content_edit.setText(content);
+                holder.content_edit.setFocusable(true);
                 holder.finish.setVisibility(View.VISIBLE);
                 holder.unFinish.setVisibility(View.VISIBLE);
                 break;
@@ -179,6 +162,17 @@ public class ListAdapter extends RecyclerView.Adapter<ListAdapter.ViewHolder> {
                 holder.finish.setVisibility(View.INVISIBLE);
                 holder.unFinish.setVisibility(View.INVISIBLE);
                 break;
+        }
+        //todo 这里的focus问题怎么解决
+        if(position==dataList.size()-1){
+            if(status==ItemStatus.NO_CONTENT||status==ItemStatus.NO_RECORD){
+                holder.content_edit.requestFocus();
+                if(content!=null){
+                    holder.content_edit.setSelection(content.length(),content.length());
+                }else{
+                    holder.content_edit.setSelection(0);
+                }
+            }
         }
     }
 
