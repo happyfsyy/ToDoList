@@ -26,6 +26,7 @@ import com.example.todolist.listener.OnNextListener;
 import com.example.todolist.listener.OnTextChangeListener;
 import com.example.todolist.utils.DataUtil;
 import com.example.todolist.utils.DateUtil;
+import com.example.todolist.utils.LogUtil;
 import com.example.todolist.utils.SoftKeyboardUtil;
 import com.example.todolist.utils.ToastUtil;
 import com.google.android.material.snackbar.Snackbar;
@@ -85,6 +86,18 @@ public class ListActivity extends BaseActivity{
         dbHelper=new MyOpenHelper(ListActivity.this,"list.db",null,1);
         database=dbHelper.getWritableDatabase();
         calendar=Calendar.getInstance();
+        int year=calendar.get(Calendar.YEAR);
+        int month=calendar.get(Calendar.MONTH);
+        int day=calendar.get(Calendar.DAY_OF_MONTH);
+        int dayOfWeek=calendar.get(Calendar.DAY_OF_WEEK);
+        LogUtil.e("year:\t"+year);
+        LogUtil.e("month:\t"+month);
+        LogUtil.e("dayOfMonth:\t"+day);
+        LogUtil.e("dayOfWeek:\t"+dayOfWeek);
+        calendar.add(Calendar.DAY_OF_MONTH,1);
+        LogUtil.e("dayofWeek:\t"+calendar.get(Calendar.DAY_OF_WEEK));
+        calendar.add(Calendar.DAY_OF_MONTH,1);
+        LogUtil.e("dayofWeek:\t"+calendar.get(Calendar.DAY_OF_WEEK));
         date=calendar.getTime();
         time=DateUtil.dateToString(date);
         dateTextView.setText(time);
@@ -97,7 +110,7 @@ public class ListActivity extends BaseActivity{
         }else if(status==DayStatus.GOOD){
 
         }else{
-            throw new IllegalStateException("获得的status不是三种心情之一，status="+status);
+//            throw new IllegalStateException("获得的status不是三种心情之一，status="+status);
         }
 
         dateLayout.setOnClickListener(new View.OnClickListener() {
