@@ -18,7 +18,6 @@ import com.example.todolist.bean.ListItem;
 import com.example.todolist.listener.OnBackPressListener;
 import com.example.todolist.listener.OnClickListener;
 import com.example.todolist.listener.OnNextListener;
-import com.example.todolist.bean.ListItem.ItemStatus;
 import com.example.todolist.listener.OnTextChangeListener;
 import com.example.todolist.utils.LogUtil;
 
@@ -133,29 +132,29 @@ public class ListAdapter extends RecyclerView.Adapter<ListAdapter.ViewHolder> {
     }
     @Override
     public void onBindViewHolder(@NonNull final ViewHolder holder, int position) {
-        ItemStatus status=dataList.get(position).getStatus();
+        int status=dataList.get(position).getStatus();
         String content=dataList.get(position).getContent();
         switch (status){
-            case NO_CONTENT:
+            case ListItem.NO_CONTENT:
                 holder.content_edit.setText("");
                 holder.content_edit.setFocusable(true);
                 holder.finish.setVisibility(View.INVISIBLE);
                 holder.unFinish.setVisibility(View.INVISIBLE);
                 break;
-            case NO_RECORD:
+            case ListItem.NO_RECORD:
                 holder.content_edit.setText(content);
                 holder.content_edit.setFocusable(true);
                 holder.finish.setVisibility(View.VISIBLE);
                 holder.unFinish.setVisibility(View.VISIBLE);
                 break;
-            case FINISH:
+            case ListItem.FINISH:
                 holder.content_edit.setText(content);
                 holder.content_edit.setFocusable(false);
                 //todo holder.status.setResources() 完成按钮
                 holder.finish.setVisibility(View.INVISIBLE);
                 holder.unFinish.setVisibility(View.INVISIBLE);
                 break;
-            case UNFINISH:
+            case ListItem.UNFINISH:
                 holder.content_edit.setText(content);
                 holder.content_edit.setFocusable(false);
                 //todo holder.status.setResources() 未完成按钮
@@ -165,7 +164,7 @@ public class ListAdapter extends RecyclerView.Adapter<ListAdapter.ViewHolder> {
         }
         //todo 这里的focus问题怎么解决
         if(position==dataList.size()-1){
-            if(status==ItemStatus.NO_CONTENT||status==ItemStatus.NO_RECORD){
+            if(status==ListItem.NO_CONTENT||status==ListItem.NO_RECORD){
                 holder.content_edit.requestFocus();
                 if(content!=null){
                     holder.content_edit.setSelection(content.length(),content.length());
