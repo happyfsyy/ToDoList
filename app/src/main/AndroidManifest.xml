@@ -11,6 +11,9 @@
         android:theme="@style/NoActionbarTheme">
         <activity android:name=".activity.ListActivity"
             android:windowSoftInputMode="stateHidden|adjustResize">
+
+        </activity>
+        <activity android:name=".activity.DateAct">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
                 <category android:name="android.intent.category.LAUNCHER"/>
