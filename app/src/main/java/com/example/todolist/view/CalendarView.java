@@ -12,6 +12,7 @@ import android.view.View;
 import com.example.todolist.R;
 import com.example.todolist.activity.DateAct;
 import com.example.todolist.listener.OnItemSelectedListener;
+import com.example.todolist.utils.DateUtil;
 import com.example.todolist.utils.DisplayUtil;
 import com.example.todolist.utils.LogUtil;
 
@@ -36,7 +37,7 @@ public class CalendarView extends View {
     private Paint selectedBgPaint;//圆圈
     private int selectedBgColor=Color.YELLOW;
     private int todayColor=Color.RED;
-    private Calendar calendar;//这是个变量，我需要不断的用它
+    private Calendar calendar;//这就是个变量
     private Date todayDate;//不变的，就是今天
     private Date curMonthDate;
     private Date selectedDate;
@@ -44,6 +45,7 @@ public class CalendarView extends View {
     private int[] dayText=new int[42];
     private int curMonthStartIndex;
     private int curMonthEndIndex;
+    private int dayNum;//这个月有多少天
     private float dayTextHeight;
     private OnItemSelectedListener onItemSelectedListener;
 
@@ -55,13 +57,25 @@ public class CalendarView extends View {
         init();
     }
     private void init(){
+        calendar=Calendar.getInstance();
+        todayDate=new Date();
+        selectedDate=new Date();
+        curMonthDate=new Date();
+
         leftPadding=DisplayUtil.dp2px(10);
         rightPadding=leftPadding;
         width=DisplayUtil.getScreenWidth();
         cellWidth=(width-2*leftPadding)/7f;
         cellHeight=cellWidth*0.8f;
-        height=(int)(cellHeight*7);
 
+        calculateStartEndIndex();
+        if(curMonthEndIndex<28){
+            height=(int)(cellHeight*5);
+        }else if(curMonthEndIndex<35){
+            height=(int)(cellHeight*6);
+        }else{
+            height=(int)(cellHeight*7);
+        }
 
         weekPaint=new Paint(Paint.ANTI_ALIAS_FLAG);
         weekPaint.setTextSize(DisplayUtil.sp2px(16));
@@ -78,11 +92,6 @@ public class CalendarView extends View {
         selectedBgPaint=new Paint(Paint.ANTI_ALIAS_FLAG);
         selectedBgPaint.setColor(selectedBgColor);
 
-        calendar=Calendar.getInstance();
-        todayDate=new Date();
-        selectedDate=new Date();
-        curMonthDate=new Date();
-
         Rect rect=new Rect();
         dayPaint.getTextBounds("日",0,1,rect);
         dayTextHeight=rect.height();
@@ -94,6 +103,7 @@ public class CalendarView extends View {
     }
     @Override
     protected void onDraw(Canvas canvas) {
+        canvas.drawColor(Color.WHITE);
         //画日、一、二、三、四、五、六那一行
         float weekTextX,weekTextY;
         weekTextY=cellHeight/2+dayTextHeight/2;
@@ -138,18 +148,21 @@ public class CalendarView extends View {
         return paint.measureText(text);
     }
 
-    private void calculateDate(){
+    private void calculateStartEndIndex(){
         calendar.setTime(curMonthDate);
         calendar.set(Calendar.DAY_OF_MONTH,1);
         int dayOfWeek=calendar.get(Calendar.DAY_OF_WEEK);//1号是星期几
         curMonthStartIndex=dayOfWeek-1;
+        calendar.add(Calendar.MONTH,1);
+        calendar.set(Calendar.DAY_OF_MONTH,0);
+        dayNum=calendar.get(Calendar.DAY_OF_MONTH);
+        curMonthEndIndex=curMonthStartIndex+dayNum-1;
+    }
+    private void calculateDate(){
+        calculateStartEndIndex();
         for(int i=0;i<curMonthStartIndex;i++){
             dayText[i]=-1;
         }
-        calendar.add(Calendar.MONTH,1);
-        calendar.set(Calendar.DAY_OF_MONTH,0);
-        int dayNum=calendar.get(Calendar.DAY_OF_MONTH);
-        curMonthEndIndex=curMonthStartIndex+dayNum-1;
         for(int i=1;i<=dayNum;i++){
             dayText[curMonthStartIndex+i-1]=i;
         }
@@ -209,7 +222,8 @@ public class CalendarView extends View {
     private int getSelectedIndex(){
         calendar.setTime(selectedDate);
         int day=calendar.get(Calendar.DAY_OF_MONTH);
-        return curMonthStartIndex+day-1;
+        int selectedIndex=curMonthStartIndex+day-1;
+        return selectedIndex>curMonthEndIndex?curMonthEndIndex:selectedIndex;
     }
     private void drawSelectedBg(Canvas canvas){
         int selectedIndex=getSelectedIndex();
@@ -222,5 +236,16 @@ public class CalendarView extends View {
     }
     public void setOnItemSelectedListener(OnItemSelectedListener onItemSelectedListener){
         this.onItemSelectedListener=onItemSelectedListener;
+    }
+    public void setCurMonthDate(Date curMonthDate){
+        this.curMonthDate=curMonthDate;
+        this.postInvalidate();
+    }
+    public void setSelectedDate(Date selectedDate){
+        this.selectedDate=selectedDate;
+        this.postInvalidate();
+    }
+    public Date getSelectedDate(){
+        return selectedDate;
     }
 }

@@ -99,7 +99,7 @@ public class ListActivity extends BaseActivity{
         calendar.add(Calendar.DAY_OF_MONTH,1);
         LogUtil.e("dayofWeek:\t"+calendar.get(Calendar.DAY_OF_WEEK));
         date=calendar.getTime();
-        time=DateUtil.dateToString(date);
+        time=DateUtil.getYearMonthDayNumberic(date);
         dateTextView.setText(time);
         //todo 根据数据库获取当天的状况,需不需要开启线程
         int status= DayStatusDao.queryStatus(time);

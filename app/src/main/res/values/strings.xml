@@ -1,6 +1,9 @@
 <resources>
     <string name="app_name">ToDoList</string>
     <string name="list_settings">Settings</string>
-    <string name="year_and_month">%d年%d月</string>
+    <string name="year_month_day_numberic">%4d/%2d/%2d</string>
+    <string name="year_and_month">%d年%02d月</string>
     <string name="year_month_day">%d年%02d月%02d日</string>
+    <string name="empty_item_text">没有日常</string>
+    <string name="date_item_header">我的list(%d天后):</string>
 </resources>

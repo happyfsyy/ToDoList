@@ -1,10 +1,49 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical" android:layout_width="match_parent"
-    android:layout_height="match_parent">
-    <com.example.todolist.view.CalendarView
-        android:id="@+id/calendar_view"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="#999999">
+    <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
-    </com.example.todolist.view.CalendarView>
+        android:layout_height="wrap_content"
+        android:background="@color/colorTheme"
+        android:paddingTop="@dimen/default_inner_padding"
+        android:paddingBottom="@dimen/default_inner_padding">
+        <ImageView
+            android:id="@+id/date_last_month"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentStart="true"
+            android:layout_centerVertical="true"
+            android:padding="@dimen/default_margin"
+            android:src="@drawable/last_month" />
+        <ImageView
+            android:id="@+id/date_next_month"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:layout_centerVertical="true"
+            android:padding="@dimen/default_margin"
+            android:src="@drawable/next_month" />
+        <TextView
+            android:id="@+id/date_year_month"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:textSize="20sp"
+            android:textColor="#fff"/>
+    </RelativeLayout>
+    <androidx.viewpager.widget.ViewPager
+        android:id="@+id/date_viewpager"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+    </androidx.viewpager.widget.ViewPager>
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/date_recyclerView"
+        android:layout_marginTop="10dp"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="#fff">
+    </androidx.recyclerview.widget.RecyclerView>
 </LinearLayout>

@@ -11,6 +11,18 @@ public class ListItem {
     private String content;
     private int status;
     private String time;
+    private int itemViewType;
+    public static final int TYPE_HEADER=105;
+    public static final int TYPE_NORMAL=106;
+    public static final int TYPE_EMPTY=107;
+    public ListItem(int itemViewType){
+        this.itemViewType=itemViewType;
+    }
+    public ListItem(int itemType,int status,String content){
+        this.itemViewType=itemType;
+        this.status=status;
+        this.content=content;
+    }
     public ListItem(String content,int status,String time){
         this.content=content;
         this.status=status;
@@ -39,5 +51,11 @@ public class ListItem {
     }
     public void setId(long id) {
         this.id = id;
+    }
+    public int getItemViewType() {
+        return itemViewType;
+    }
+    public void setItemViewType(int itemViewType) {
+        this.itemViewType = itemViewType;
     }
 }
