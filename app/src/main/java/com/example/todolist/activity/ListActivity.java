@@ -1,6 +1,7 @@
 package com.example.todolist.activity;
 
 import android.content.ContentValues;
+import android.content.Intent;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.text.Editable;
@@ -8,12 +9,14 @@ import android.text.TextUtils;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.example.todolist.R;
+import com.example.todolist.adapter.DateAdapter;
 import com.example.todolist.adapter.ListAdapter;
 import com.example.todolist.bean.DayStatus;
 import com.example.todolist.bean.ListItem;
@@ -22,6 +25,7 @@ import com.example.todolist.db.ListItemDao;
 import com.example.todolist.db.MyOpenHelper;
 import com.example.todolist.listener.OnBackPressListener;
 import com.example.todolist.listener.OnClickListener;
+import com.example.todolist.listener.OnFocusChangeListener;
 import com.example.todolist.listener.OnNextListener;
 import com.example.todolist.listener.OnTextChangeListener;
 import com.example.todolist.utils.DataUtil;
@@ -45,9 +49,8 @@ import androidx.recyclerview.widget.RecyclerView;
 
 public class ListActivity extends BaseActivity{
     private Toolbar toolbar;
-    private LinearLayout dateLayout;
     private TextView dateTextView;
-    private ImageView emotion;
+    private LinearLayoutManager layoutManager;
     private RecyclerView recyclerView;
     private ListAdapter adapter;
     private List<ListItem> dataList=new ArrayList<>();
@@ -56,24 +59,31 @@ public class ListActivity extends BaseActivity{
     private String time;
     private MyOpenHelper dbHelper;
     private SQLiteDatabase database;
+    private long preTime;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_list);
+        initParams();
         initViews();
+    }
+    private void initParams(){
+        dbHelper=new MyOpenHelper(ListActivity.this,"list.db",null,1);
+        database=dbHelper.getWritableDatabase();
+        calendar=Calendar.getInstance();
+        date=calendar.getTime();
     }
     private void initViews(){
         toolbar=findViewById(R.id.list_toolbar);
-        dateLayout=findViewById(R.id.list_date_layout);
         dateTextView=findViewById(R.id.list_date);
-        emotion=findViewById(R.id.list_emotion);
         recyclerView=findViewById(R.id.list_recycler_view);
 
         initToolbar();
-        initDateLayout();
+        initDate();
         initRecyclerView();
     }
+
     private void initToolbar(){
         setSupportActionBar(toolbar);
         ActionBar actionBar=getSupportActionBar();
@@ -82,55 +92,28 @@ public class ListActivity extends BaseActivity{
             actionBar.setDisplayShowTitleEnabled(false);
         }
     }
-    private void initDateLayout(){
-        dbHelper=new MyOpenHelper(ListActivity.this,"list.db",null,1);
-        database=dbHelper.getWritableDatabase();
-        calendar=Calendar.getInstance();
-        int year=calendar.get(Calendar.YEAR);
-        int month=calendar.get(Calendar.MONTH);
-        int day=calendar.get(Calendar.DAY_OF_MONTH);
-        int dayOfWeek=calendar.get(Calendar.DAY_OF_WEEK);
-        LogUtil.e("year:\t"+year);
-        LogUtil.e("month:\t"+month);
-        LogUtil.e("dayOfMonth:\t"+day);
-        LogUtil.e("dayOfWeek:\t"+dayOfWeek);
-        calendar.add(Calendar.DAY_OF_MONTH,1);
-        LogUtil.e("dayofWeek:\t"+calendar.get(Calendar.DAY_OF_WEEK));
-        calendar.add(Calendar.DAY_OF_MONTH,1);
-        LogUtil.e("dayofWeek:\t"+calendar.get(Calendar.DAY_OF_WEEK));
-        date=calendar.getTime();
+    private void initDate(){
         time=DateUtil.getYearMonthDayNumberic(date);
         dateTextView.setText(time);
-        //todo 根据数据库获取当天的状况,需不需要开启线程
-        int status= DayStatusDao.queryStatus(time);
-        if(status==DayStatus.BAD){
-            //todo 设置emotion的图片
-        }else if(status==DayStatus.ORDINARY){
-
-        }else if(status==DayStatus.GOOD){
-
-        }else{
-//            throw new IllegalStateException("获得的status不是三种心情之一，status="+status);
-        }
-
-        dateLayout.setOnClickListener(new View.OnClickListener() {
+        dateTextView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                ToastUtil.showToast("向表中添加数据试试看");
-                DayStatus dayStatus=new DayStatus(time,DayStatus.BAD);
-                dbHelper.getWritableDatabase();
-                SQLiteDatabase database=dbHelper.getWritableDatabase();
-                ContentValues values= DataUtil.getDayStatusCV(dayStatus);
-                database.insert("DayStatus",null,values);
+//                for(int i=0;i<dataList.size();i++){
+//                    ListItemDao.deleteItem(dataList.get(i).getId());
+//                }
+                Intent intent=new Intent(ListActivity.this, DateAct.class);
+                startActivity(intent);
             }
         });
     }
     private void initRecyclerView(){
-        recyclerView.setLayoutManager(new LinearLayoutManager(this));
+        layoutManager=new LinearLayoutManager(this);
+        recyclerView.setLayoutManager(layoutManager);
         initDataList();
         adapter=new ListAdapter(dataList);
         recyclerView.setAdapter(adapter);
         recyclerView.setItemAnimator(new DefaultItemAnimator());
+        layoutManager.scrollToPosition(dataList.size()-1);
         adapter.setOnFinishListener(new OnClickListener() {
             @Override
             public void onClick(View view, int position) {
@@ -145,111 +128,95 @@ public class ListActivity extends BaseActivity{
                 addEmptyItem(position);
             }
         });
-        adapter.setOnNextListener(new OnNextListener() {
-            @Override
-            public void onNext(int pos) {
-                if (!TextUtils.isEmpty(dataList.get(pos).getContent())) {
-                    if (isLastItem(pos)) {
-                        addEmptyItem(pos);
-                        //todo 这里要不要隐藏软键盘
-                    } else {
-                        //todo 向下寻找focus的editText，向上寻找focus的editText
-                        int firstPos=((LinearLayoutManager)recyclerView.getLayoutManager()).findFirstVisibleItemPosition();
-                        int childCount=recyclerView.getChildCount();
-                        for(int i=pos-firstPos+1;i<childCount;i++){
-                            //这里的i是真实的可见的realPos
-                            if(dataList.get(i+firstPos).getStatus()== ListItem.NO_CONTENT||
-                                    dataList.get(i+firstPos).getStatus()==ListItem.NO_RECORD){
-                                String content=dataList.get(i+firstPos).getContent();
-                                View itemView=recyclerView.getChildAt(i);
-                                ListAdapter.ViewHolder viewHolder=(ListAdapter.ViewHolder)recyclerView.getChildViewHolder(itemView);
-                                viewHolder.content_edit.requestFocus();
-                                if(content==null){
-                                    viewHolder.content_edit.setSelection(0);
-                                }else{
-                                    viewHolder.content_edit.setSelection(content.length());
-                                }
-//                                SoftKeyboardUtil.hideKeyboard(ListActivity.this);
-                                break;
-                            }
-                        }
-                    }
-                }
-            }
-        });
         adapter.setOnTextChangeListener(new OnTextChangeListener() {
             @Override
             public void onTextChange(Editable s, int pos) {
                 ListAdapter.ViewHolder viewHolder=(ListAdapter.ViewHolder)recyclerView.findViewHolderForAdapterPosition(pos);
-                if(!TextUtils.isEmpty(s.toString())){
-                    //todo 这里的dataList与ListAdapter中的dataList不一致怎么办
-                    if(viewHolder!=null){
-                        viewHolder.finish.setVisibility(View.VISIBLE);
-                        viewHolder.unFinish.setVisibility(View.VISIBLE);
-                    }
-                    if(dataList.get(pos).getStatus()== ListItem.NO_RECORD||
+                if(dataList.get(pos).getStatus()==ListItem.NO_RECORD||
                         dataList.get(pos).getStatus()==ListItem.NO_CONTENT){
+                    if(!TextUtils.isEmpty(s.toString())){
+                        if(viewHolder!=null){
+                            viewHolder.finish.setVisibility(View.VISIBLE);
+                            viewHolder.unFinish.setVisibility(View.VISIBLE);
+                        }
                         dataList.get(pos).setStatus(ListItem.NO_RECORD);
                         dataList.get(pos).setContent(s.toString());
+                        ContentValues values=DataUtil.generateCV(s.toString(),ListItem.NO_RECORD);
+                        ListItemDao.updateItem(dataList.get(pos).getId(),values);
+                    }else{
+                        if(viewHolder!=null){
+                            viewHolder.finish.setVisibility(View.INVISIBLE);
+                            viewHolder.unFinish.setVisibility(View.INVISIBLE);
+                        }
+                        dataList.get(pos).setStatus(ListItem.NO_CONTENT);
+                        dataList.get(pos).setContent("");
+                        ContentValues values=DataUtil.generateCV("",ListItem.NO_CONTENT);
+                        ListItemDao.updateItem(dataList.get(pos).getId(),values);
                     }
-                    ContentValues values=DataUtil.generateCV(s.toString(),ListItem.NO_RECORD);
-                    ListItemDao.updateItem(dataList.get(pos).getId(),values);
+                }
+            }
+        });
+        adapter.setOnNextListener(new OnNextListener() {
+            @Override
+            public void onNext(int pos) {
+                if(isLastItem(pos)){
+                    if (!TextUtils.isEmpty(dataList.get(pos).getContent())){
+                        addEmptyItem(pos);
+                        adapter.setNewItem(true);
+                    }
                 }else{
-                    if(viewHolder!=null){
-                        viewHolder.finish.setVisibility(View.INVISIBLE);
-                        viewHolder.unFinish.setVisibility(View.INVISIBLE);
+                    int firstVisibleItemPos=((LinearLayoutManager)recyclerView.getLayoutManager()).findFirstVisibleItemPosition();
+                    int nextPos=getNextFocusPos(pos);
+                    if(nextPos!=pos){
+                        String content=dataList.get(nextPos).getContent();
+                        adapter.setNewItem(false);
+                        View itemView=recyclerView.getChildAt(nextPos-firstVisibleItemPos);
+                        ListAdapter.ViewHolder viewHolder=(ListAdapter.ViewHolder)recyclerView.getChildViewHolder(itemView);
+                        layoutManager.scrollToPositionWithOffset(nextPos,50);
+                        viewHolder.content_edit.requestFocus();
+                        viewHolder.content_edit.setSelection(content.length());
                     }
-                    dataList.get(pos).setStatus(ListItem.NO_CONTENT);
-                    dataList.get(pos).setContent("");
-                    ContentValues values=DataUtil.generateCV("",ListItem.NO_CONTENT);
-                    ListItemDao.updateItem(dataList.get(pos).getId(),values);
                 }
             }
         });
         adapter.setOnBackPressListener(new OnBackPressListener() {
             @Override
             public void onBackPress(EditText editText, int pos) {
-                int startSelection=editText.getSelectionStart();
-                if(startSelection==0){
-                    //todo 如果list只有一项，那么不能删除
-                    //todo 如果只有这一项是no_record，也不能删除
-                    if(pos-1>=0){
-                        String curContent=dataList.get(pos).getContent();
-                        int preStatus=dataList.get(pos-1).getStatus();
-                        String preContent=dataList.get(pos-1).getContent();
-                        if(preStatus== ListItem.NO_CONTENT||
-                                preStatus== ListItem.NO_RECORD){
-                            String content=preContent+curContent;
-                            dataList.get(pos-1).setContent(content);
-                            dataList.get(pos-1).setStatus(ListItem.NO_RECORD);
-                            adapter.notifyItemChanged(pos-1);
-                            ContentValues values=DataUtil.generateCV(content,ListItem.NO_RECORD);
-                            ListItemDao.updateItem(dataList.get(pos-1).getId(),values);
+                if(pos!=dataList.size()-1){
+                    int startSelection=editText.getSelectionStart();
+                    if(startSelection==0){
+                        long currentTime=System.currentTimeMillis();
+                        if(currentTime-preTime>2000){
+                            ToastUtil.showToast("再按一次删除当前项");
+                            preTime=currentTime;
+                        }else{
+                            if(pos-1>=0){
+                                mergeText(pos);
+                            }
+                            LogUtil.e("pos="+pos);
+                            ListItemDao.deleteItem(dataList.get(pos).getId());
+                            dataList.remove(pos);
+                            adapter.notifyItemRemoved(pos);
                         }
                     }
-                    dataList.remove(pos);
-                    adapter.notifyItemRemoved(pos);
-                    ListItemDao.deleteItem(dataList.get(pos).getId());
-
-                    Snackbar.make(recyclerView,"已删除当前项",Snackbar.LENGTH_SHORT)
-                            .setAction("撤销删除", new View.OnClickListener() {
-                                @Override
-                                public void onClick(View v) {
-                                    //todo 撤销删除
-                                    ToastUtil.showToast("撤销删除太麻烦");
-
-                                }
-                            }).show();
                 }
             }
         });
-
     }
     private void initDataList(){
         dataList= ListItemDao.queryAllItems(time);
+        LogUtil.e("dataList.size():"+dataList.size());
+
+        if(dataList.size()==0){
+            ListItem item=createEmptyItem();
+            dataList.add(item);
+        }
     }
     private ListItem createEmptyItem(){
-        return new ListItem("", ListItem.NO_CONTENT,time);
+        ListItem item=new ListItem("",ListItem.NO_CONTENT,time);
+        long itemId=ListItemDao.insertListItem(item);
+        item.setId(itemId);
+        return item;
     }
 
     /**
@@ -268,8 +235,7 @@ public class ListActivity extends BaseActivity{
             ListItem listItem=createEmptyItem();
             dataList.add(listItem);
             adapter.notifyItemInserted(dataList.size()-1);
-            long id=ListItemDao.insertListItem(listItem);
-            dataList.get(dataList.size()-1).setId(id);
+            layoutManager.scrollToPosition(dataList.size()-1);
         }
     }
 
@@ -299,5 +265,44 @@ public class ListActivity extends BaseActivity{
                 break;
         }
         return true;
+    }
+
+    /**
+     * 获取当前位置开始向下数，下一个可以focus的editText的位置
+     * @param pos adapterPosition
+     * @return 返回的是在datalist中的pos
+     */
+    private int getNextFocusPos(int pos){
+        int firstPos=((LinearLayoutManager)recyclerView.getLayoutManager()).findFirstVisibleItemPosition();
+        int childCount=recyclerView.getChildCount();
+        LogUtil.e("firstVisibleItem:"+firstPos+"\tchildCount:"+childCount);
+        int returnPos=pos;
+        for(int i=pos-firstPos+1;i<childCount;i++){
+            if(dataList.get(i+firstPos).getStatus()==ListItem.NO_RECORD||
+                dataList.get(i+firstPos).getStatus()==ListItem.NO_CONTENT){
+                returnPos=i+firstPos;
+                break;
+            }
+        }
+        return returnPos;
+    }
+
+    /**
+     * 合并当前项和上一项的文本内容
+     * @param pos
+     */
+    private void mergeText(int pos){
+        String curContent=dataList.get(pos).getContent();
+        int preStatus=dataList.get(pos-1).getStatus();
+        String preContent=dataList.get(pos-1).getContent();
+        if(preStatus== ListItem.NO_CONTENT||
+                preStatus== ListItem.NO_RECORD){
+            String content=preContent+curContent;
+            dataList.get(pos-1).setContent(content);
+            dataList.get(pos-1).setStatus(ListItem.NO_RECORD);
+            adapter.notifyItemChanged(pos-1);
+            ContentValues values=DataUtil.generateCV(content,ListItem.NO_RECORD);
+            ListItemDao.updateItem(dataList.get(pos-1).getId(),values);
+        }
     }
 }

@@ -11,36 +11,16 @@
         android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
         app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
         android:background="@color/colorTheme">
-        <LinearLayout
-            android:id="@+id/list_date_layout"
+        <TextView
+            android:id="@+id/list_date"
             android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:orientation="horizontal"
-            android:paddingStart="@dimen/default_layout_padding"
-            android:paddingEnd="@dimen/default_layout_padding"
+            android:layout_height="wrap_content"
+            android:padding="@dimen/default_inner_padding"
+            android:textSize="20sp"
+            android:textColor="#fff"
             android:layout_gravity="center"
-            android:background="@drawable/list_date_bg">
-            <TextView
-                android:id="@+id/list_date"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:paddingTop="@dimen/default_inner_padding"
-                android:paddingBottom="@dimen/default_inner_padding"
-                android:text="2019/3/5"
-                android:textSize="20sp"
-                android:textColor="#fff"
-                android:layout_gravity="center_vertical"
-                android:typeface="monospace"
-                android:textStyle="bold"
-                />
-            <ImageView
-                android:id="@+id/list_emotion"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="@dimen/small_margin"
-                android:src="@drawable/emotion1"
-                android:layout_gravity="center_vertical"/>
-        </LinearLayout>
+            android:typeface="monospace"
+            android:background="@drawable/list_date_bg" />
     </androidx.appcompat.widget.Toolbar>
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/list_recycler_view"

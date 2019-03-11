@@ -30,7 +30,15 @@
                 android:layout_height="wrap_content"
                 android:singleLine="true"
                 android:imeOptions="actionNext"
-                android:background="@android:color/transparent" />
+                android:background="@android:color/transparent"
+                android:textSize="16sp"/>
+            <TextView
+                android:id="@+id/item_content_text"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:singleLine="true"
+                android:textSize="16sp"
+                android:visibility="gone"/>
         </LinearLayout>
         <include layout="@layout/horizontal_line"
             android:layout_width="match_parent"
