@@ -18,6 +18,7 @@ import com.example.todolist.listener.OnItemSelectedListener;
 import com.example.todolist.utils.DataUtil;
 import com.example.todolist.utils.DateUtil;
 import com.example.todolist.utils.DisplayUtil;
+import com.example.todolist.utils.LogUtil;
 import com.example.todolist.utils.ToastUtil;
 import com.example.todolist.view.CalendarView;
 
@@ -45,6 +46,7 @@ public class DateAct extends BaseActivity{
     private RecyclerView recyclerView;
     private List<ListItem> dataList;
     private DateAdapter dateAdapter;
+    private OnItemSelectedListener onItemSelectedListener;
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -72,6 +74,10 @@ public class DateAct extends BaseActivity{
             public void onClick(View v) {
                 clickLast();
                 setCalendarViewsDate();
+                Calendar tempCalendar=Calendar.getInstance();
+                tempCalendar.setTime(calendarViews[1].getSelectedDate());
+                tempCalendar.add(Calendar.MONTH,-1);
+                onItemSelectedListener.onItemSelected(tempCalendar.getTime(),calendarViews[1]);
             }
         });
         nextMonth.setOnClickListener(new View.OnClickListener() {
@@ -79,6 +85,10 @@ public class DateAct extends BaseActivity{
             public void onClick(View v) {
                 clickNext();
                 setCalendarViewsDate();
+                Calendar tempCalendar=Calendar.getInstance();
+                tempCalendar.setTime(calendarViews[1].getSelectedDate());
+                tempCalendar.add(Calendar.MONTH,1);
+                onItemSelectedListener.onItemSelected(tempCalendar.getTime(),calendarViews[1]);
             }
         });
     }
@@ -93,20 +103,24 @@ public class DateAct extends BaseActivity{
         yearAndMonth.setText(yearMonthText);
     }
     private void initCalendarViews(){
+        onItemSelectedListener=new OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(Date selectedDate,CalendarView view) {
+                LogUtil.e("换日期了:"+DateUtil.getYearMonthDayNumberic(selectedDate));
+                for(int i=0;i<3;i++){
+                    if(calendarViews[i].getSelectedDate().compareTo(selectedDate)!=0){
+                        calendarViews[i].setSelectedDate(selectedDate);
+                    }
+                }
+                dataList.clear();
+                List<ListItem> list= ListItemDao.queryAllItemsExceptNoContent(DateUtil.getYearMonthDayNumberic(selectedDate));
+                dataList.addAll(list);
+                dateAdapter.notifyDataSetChanged();
+            }
+        };
         for(int i=0;i<3;i++){
             calendarViews[i]=new CalendarView(this);
-            calendarViews[i].setOnItemSelectedListener(new OnItemSelectedListener() {
-                @Override
-                public void onItemSelected(Date selectedDate) {
-                    for(int i=0;i<3;i++){
-                        if(calendarViews[i].getSelectedDate().compareTo(selectedDate)!=0){
-                            calendarViews[i].setSelectedDate(selectedDate);
-                        }
-                    }
-                    ToastUtil.showToast(DateUtil.getYearMonthDay(selectedDate));
-                    //todo private OnItemSelectedListener
-                }
-            });
+            calendarViews[i].setOnItemSelectedListener(onItemSelectedListener);
         }
         setCalendarViewsDate();
     }
@@ -148,7 +162,11 @@ public class DateAct extends BaseActivity{
     }
     private void initRecyclerView(){
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
-        dataList= ListItemDao.queryAllItems(DateUtil.getYearMonthDayNumberic(tempDate));
+        tempDate=new Date();
+        dataList= ListItemDao.queryAllItemsExceptNoContent(DateUtil.getYearMonthDayNumberic(tempDate));
+        for(int i=0;i<dataList.size();i++){
+            LogUtil.e("id="+dataList.get(i).getId());
+        }
         dateAdapter=new DateAdapter(this,dataList);
         View headerView= LayoutInflater.from(this).inflate(R.layout.date_header_item,null);
         dateAdapter.addHeaderView(headerView);

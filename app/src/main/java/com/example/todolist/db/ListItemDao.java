@@ -40,7 +40,7 @@ public class ListItemDao {
     public static List<ListItem> queryAllItemsExceptNoContent(String time){
         List<ListItem> list=new ArrayList<>();
         SQLiteDatabase db=dbHelper.getWritableDatabase();
-        Cursor cursor=db.query("ListItem",null,"time=? and status>?",new String[]{time,"101"},null,null,"l_id asc");
+        Cursor cursor=db.query("ListItem",null,"time=? and status!=?",new String[]{time,"101"},null,null,"l_id asc");
         ListItem listItem;
         while(cursor.moveToNext()){
             long id=cursor.getLong(cursor.getColumnIndex("l_id"));

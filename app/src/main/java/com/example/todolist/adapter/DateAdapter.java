@@ -59,8 +59,9 @@ public class DateAdapter extends RecyclerView.Adapter<DateAdapter.NormalViewHold
     public void onBindViewHolder(@NonNull DateAdapter.NormalViewHolder holder, int position) {
         int itemViewType=getItemViewType(position);
         if(itemViewType==ListItem.TYPE_NORMAL){
-            int status=dataList.get(position).getStatus();
-            String content=dataList.get(position).getContent();
+            int pos=getListPos(position);
+            int status=dataList.get(pos).getStatus();
+            String content=dataList.get(pos).getContent();
             //todo 这里根据status的情况，setImageRes，完成未完成
             holder.status.setImageResource(R.drawable.emotion1);
             holder.content.setText(content);
@@ -93,5 +94,8 @@ public class DateAdapter extends RecyclerView.Adapter<DateAdapter.NormalViewHold
     public void addHeaderView(View headerView){
         this.headerView=headerView;
         notifyItemInserted(0);
+    }
+    private int getListPos(int pos){
+        return headerView==null?pos:pos-1;
     }
 }

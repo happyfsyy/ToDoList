@@ -186,7 +186,7 @@ public class CalendarView extends View {
                 boolean isSetSelectedDate=setSelectedDate(x,y);
                 if(isSetSelectedDate){
                     invalidate();
-                    onItemSelectedListener.onItemSelected(selectedDate);
+                    onItemSelectedListener.onItemSelected(selectedDate,this);
                 }
                 break;
         }
