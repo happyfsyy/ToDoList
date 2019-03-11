@@ -1,5 +1,6 @@
 package com.example.todolist.activity;
 
+import android.content.ContentValues;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -14,6 +15,7 @@ import com.example.todolist.adapter.DateAdapter;
 import com.example.todolist.bean.ListItem;
 import com.example.todolist.db.ListItemDao;
 import com.example.todolist.listener.OnItemSelectedListener;
+import com.example.todolist.utils.DataUtil;
 import com.example.todolist.utils.DateUtil;
 import com.example.todolist.utils.DisplayUtil;
 import com.example.todolist.utils.ToastUtil;
@@ -21,6 +23,7 @@ import com.example.todolist.view.CalendarView;
 
 import java.util.Calendar;
 import java.util.Date;
+import java.util.Iterator;
 import java.util.List;
 
 import androidx.annotation.Nullable;
@@ -151,6 +154,4 @@ public class DateAct extends BaseActivity{
         dateAdapter.addHeaderView(headerView);
         recyclerView.setAdapter(dateAdapter);
     }
-
-
 }

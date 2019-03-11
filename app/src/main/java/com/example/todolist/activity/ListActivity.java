@@ -58,7 +58,6 @@ public class ListActivity extends BaseActivity{
     private Date date;
     private String time;
     private MyOpenHelper dbHelper;
-    private SQLiteDatabase database;
     private long preTime;
 
     @Override
@@ -70,7 +69,6 @@ public class ListActivity extends BaseActivity{
     }
     private void initParams(){
         dbHelper=new MyOpenHelper(ListActivity.this,"list.db",null,1);
-        database=dbHelper.getWritableDatabase();
         calendar=Calendar.getInstance();
         date=calendar.getTime();
     }

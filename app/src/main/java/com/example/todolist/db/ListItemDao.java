@@ -37,6 +37,22 @@ public class ListItemDao {
         cursor.close();
         return list;
     }
+    public static List<ListItem> queryAllItemsExceptNoContent(String time){
+        List<ListItem> list=new ArrayList<>();
+        SQLiteDatabase db=dbHelper.getWritableDatabase();
+        Cursor cursor=db.query("ListItem",null,"time=? and status>?",new String[]{time,"101"},null,null,"l_id asc");
+        ListItem listItem;
+        while(cursor.moveToNext()){
+            long id=cursor.getLong(cursor.getColumnIndex("l_id"));
+            String content=cursor.getString(cursor.getColumnIndex("content"));
+            int status=cursor.getInt(cursor.getColumnIndex("status"));
+            listItem=new ListItem(content,status,time);
+            listItem.setId(id);
+            list.add(listItem);
+        }
+        cursor.close();
+        return  list;
+    }
     public static void updateItem(long id, ContentValues values){
         SQLiteDatabase db=dbHelper.getWritableDatabase();
         db.update("ListItem",values,"l_id=?",new String[]{id+""});
