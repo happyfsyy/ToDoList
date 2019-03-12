@@ -5,5 +5,5 @@ import com.example.todolist.view.CalendarView;
 import java.util.Date;
 
 public interface OnItemSelectedListener {
-    void onItemSelected(Date selectedDate, CalendarView view);
+    void onItemSelected(Date selectedDate);
 }

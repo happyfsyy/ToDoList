@@ -33,7 +33,6 @@ import com.example.todolist.utils.DateUtil;
 import com.example.todolist.utils.LogUtil;
 import com.example.todolist.utils.SoftKeyboardUtil;
 import com.example.todolist.utils.ToastUtil;
-import com.google.android.material.snackbar.Snackbar;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -54,10 +53,8 @@ public class ListActivity extends BaseActivity{
     private RecyclerView recyclerView;
     private ListAdapter adapter;
     private List<ListItem> dataList=new ArrayList<>();
-    private Calendar calendar;
     private Date date;
     private String time;
-    private MyOpenHelper dbHelper;
     private long preTime;
 
     @Override
@@ -68,8 +65,7 @@ public class ListActivity extends BaseActivity{
         initViews();
     }
     private void initParams(){
-        dbHelper=new MyOpenHelper(ListActivity.this,"list.db",null,1);
-        calendar=Calendar.getInstance();
+        Calendar calendar=Calendar.getInstance();
         date=calendar.getTime();
     }
     private void initViews(){
@@ -139,8 +135,7 @@ public class ListActivity extends BaseActivity{
                         }
                         dataList.get(pos).setStatus(ListItem.NO_RECORD);
                         dataList.get(pos).setContent(s.toString());
-                        ContentValues values=DataUtil.generateCV(s.toString(),ListItem.NO_RECORD);
-                        ListItemDao.updateItem(dataList.get(pos).getId(),values);
+                        ListItemDao.updateItem(dataList.get(pos).getId(),ListItem.NO_RECORD,s.toString());
                     }else{
                         if(viewHolder!=null){
                             viewHolder.finish.setVisibility(View.INVISIBLE);
@@ -148,8 +143,7 @@ public class ListActivity extends BaseActivity{
                         }
                         dataList.get(pos).setStatus(ListItem.NO_CONTENT);
                         dataList.get(pos).setContent("");
-                        ContentValues values=DataUtil.generateCV("",ListItem.NO_CONTENT);
-                        ListItemDao.updateItem(dataList.get(pos).getId(),values);
+                        ListItemDao.updateItem(dataList.get(pos).getId(),ListItem.NO_CONTENT,"");
                     }
                 }
             }
@@ -245,8 +239,7 @@ public class ListActivity extends BaseActivity{
     private void markStatus(int pos, int status){
         dataList.get(pos).setStatus(status);
         adapter.notifyItemChanged(pos);
-        ContentValues values=DataUtil.generateCV(status);
-        ListItemDao.updateItem(dataList.get(pos).getId(),values);
+        ListItemDao.updateItem(dataList.get(pos).getId(),status);
     }
 
     @Override
@@ -299,8 +292,7 @@ public class ListActivity extends BaseActivity{
             dataList.get(pos-1).setContent(content);
             dataList.get(pos-1).setStatus(ListItem.NO_RECORD);
             adapter.notifyItemChanged(pos-1);
-            ContentValues values=DataUtil.generateCV(content,ListItem.NO_RECORD);
-            ListItemDao.updateItem(dataList.get(pos-1).getId(),values);
+            ListItemDao.updateItem(dataList.get(pos-1).getId(),ListItem.NO_RECORD,content);
         }
     }
 }

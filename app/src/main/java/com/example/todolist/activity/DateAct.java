@@ -15,7 +15,6 @@ import com.example.todolist.adapter.DateAdapter;
 import com.example.todolist.bean.ListItem;
 import com.example.todolist.db.ListItemDao;
 import com.example.todolist.listener.OnItemSelectedListener;
-import com.example.todolist.utils.DataUtil;
 import com.example.todolist.utils.DateUtil;
 import com.example.todolist.utils.DisplayUtil;
 import com.example.todolist.utils.LogUtil;
@@ -24,7 +23,6 @@ import com.example.todolist.view.CalendarView;
 
 import java.util.Calendar;
 import java.util.Date;
-import java.util.Iterator;
 import java.util.List;
 
 import androidx.annotation.Nullable;
@@ -43,6 +41,7 @@ public class DateAct extends BaseActivity{
     private CalendarPagerAdapter adapter;
     private int currentImgIndex;
     private boolean isChanged=false;
+    private TextView headerText;
     private RecyclerView recyclerView;
     private List<ListItem> dataList;
     private DateAdapter dateAdapter;
@@ -60,10 +59,12 @@ public class DateAct extends BaseActivity{
         lastMonth=findViewById(R.id.date_last_month);
         nextMonth=findViewById(R.id.date_next_month);
         yearAndMonth=findViewById(R.id.date_year_month);
+        headerText=findViewById(R.id.date_item_header_text);
         recyclerView=findViewById(R.id.date_recyclerView);
         initYearAndMonthHeader();
         initCalendarViews();
         initViewPager();
+        initHeaderText(new Date());
         initRecyclerView();
     }
     private void initYearAndMonthHeader(){
@@ -72,23 +73,14 @@ public class DateAct extends BaseActivity{
         lastMonth.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                clickLast();
-                setCalendarViewsDate();
-                Calendar tempCalendar=Calendar.getInstance();
-                tempCalendar.setTime(calendarViews[1].getSelectedDate());
-                tempCalendar.add(Calendar.MONTH,-1);
-                onItemSelectedListener.onItemSelected(tempCalendar.getTime(),calendarViews[1]);
+                ToastUtil.showToast("我想把这个按钮删掉");
             }
         });
         nextMonth.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                clickNext();
-                setCalendarViewsDate();
-                Calendar tempCalendar=Calendar.getInstance();
-                tempCalendar.setTime(calendarViews[1].getSelectedDate());
-                tempCalendar.add(Calendar.MONTH,1);
-                onItemSelectedListener.onItemSelected(tempCalendar.getTime(),calendarViews[1]);
+                LogUtil.e("我点击了下个月的按钮");
+                viewPager.setCurrentItem(2);
             }
         });
     }
@@ -105,13 +97,15 @@ public class DateAct extends BaseActivity{
     private void initCalendarViews(){
         onItemSelectedListener=new OnItemSelectedListener() {
             @Override
-            public void onItemSelected(Date selectedDate,CalendarView view) {
+            public void onItemSelected(Date selectedDate) {
                 LogUtil.e("换日期了:"+DateUtil.getYearMonthDayNumberic(selectedDate));
-                for(int i=0;i<3;i++){
-                    if(calendarViews[i].getSelectedDate().compareTo(selectedDate)!=0){
-                        calendarViews[i].setSelectedDate(selectedDate);
-                    }
-                }
+                initHeaderText(selectedDate);
+
+                Date lastMonthDate=DateUtil.getLastMonthDate(selectedDate);
+                Date nextMonthDate=DateUtil.getNextMonthDate(selectedDate);
+                calendarViews[0].setSelectedDate(lastMonthDate);
+                calendarViews[2].setSelectedDate(nextMonthDate);
+
                 dataList.clear();
                 List<ListItem> list= ListItemDao.queryAllItemsExceptNoContent(DateUtil.getYearMonthDayNumberic(selectedDate));
                 dataList.addAll(list);
@@ -120,9 +114,18 @@ public class DateAct extends BaseActivity{
         };
         for(int i=0;i<3;i++){
             calendarViews[i]=new CalendarView(this);
-            calendarViews[i].setOnItemSelectedListener(onItemSelectedListener);
+            Date curMonthDate=calendar.getTime();
+            Date lastMonthDate=DateUtil.getLastMonthDate(curMonthDate);
+            Date nextMonthDate=DateUtil.getNextMonthDate(curMonthDate);
+            if(i==0){
+                calendarViews[i].setCurMonthAndSelectedDate(lastMonthDate,lastMonthDate,false);
+            }else if(i==1){
+                calendarViews[i].setCurMonthAndSelectedDate(curMonthDate,curMonthDate,false);
+            }else{
+                calendarViews[i].setCurMonthAndSelectedDate(nextMonthDate,nextMonthDate,false);
+            }
         }
-        setCalendarViewsDate();
+        calendarViews[1].setOnItemSelectedListener(onItemSelectedListener);
     }
     private void initViewPager(){
         float height=(DisplayUtil.getScreenWidth()-2*DisplayUtil.dp2px(10))*0.8f;
@@ -134,42 +137,64 @@ public class DateAct extends BaseActivity{
         viewPager.addOnPageChangeListener(new ViewPager.SimpleOnPageChangeListener() {
             @Override
             public void onPageSelected(int position) {
+                LogUtil.e("onPageSelected,position="+position);
                 currentImgIndex=position;
-                isChanged=true;
                 if(currentImgIndex==2){
                     clickNext();
+                    LogUtil.e("currentImgIndex=2");
+                    isChanged=true;
                 }else if(currentImgIndex==0){
                     clickLast();
+                    isChanged=true;
                 }
             }
             @Override
             public void onPageScrollStateChanged(int state) {
+                LogUtil.e("onPageScrolled");
                 if(isChanged&&state==ViewPager.SCROLL_STATE_IDLE){
-                    setCalendarViewsDate();
+                    setCurMonthAndSelectedDate();
+
+                    LogUtil.e("onPageScrolled,setCurrentItem1");
                     viewPager.setCurrentItem(1,false);
                     isChanged=false;
+                    onItemSelectedListener.onItemSelected(calendarViews[1].getSelectedDate());
+                    initHeaderText(calendarViews[1].getSelectedDate());
                 }
             }
         });
     }
-    private void setCalendarViewsDate(){
-        for(int i=0;i<3;i++){
-            calendar.add(Calendar.MONTH,i-1);
-            tempDate=calendar.getTime();
-            calendarViews[i].setCurMonthDate(tempDate);
-            calendar.add(Calendar.MONTH,1-i);
+    private void setCurMonthAndSelectedDate(){
+        Date curMonthDate=calendar.getTime();
+        Date lastMonthDate=DateUtil.getLastMonthDate(curMonthDate);
+        Date nextMonthDate=DateUtil.getNextMonthDate(curMonthDate);
+
+        Date lastSelectedDate0=calendarViews[0].getSelectedDate();
+        Date lastSelectedDate1=calendarViews[1].getSelectedDate();
+        Date lastSelectedDate2=calendarViews[2].getSelectedDate();
+        Date curSelectedDate0,curSelectedDate1,curSelectedDate2;
+        if(currentImgIndex==2){
+            curSelectedDate0=DateUtil.getNextMonthDate(lastSelectedDate0);
+            curSelectedDate1=DateUtil.getNextMonthDate(lastSelectedDate1);
+            curSelectedDate2=DateUtil.getNextMonthDate(lastSelectedDate2);
+        }else{
+            curSelectedDate0=DateUtil.getLastMonthDate(lastSelectedDate0);
+            curSelectedDate1=DateUtil.getLastMonthDate(lastSelectedDate1);
+            curSelectedDate2=DateUtil.getLastMonthDate(lastSelectedDate2);
         }
+        calendarViews[0].setCurMonthAndSelectedDate(lastMonthDate,curSelectedDate0,true);
+        calendarViews[1].setCurMonthAndSelectedDate(curMonthDate,curSelectedDate1,true);
+        calendarViews[2].setCurMonthAndSelectedDate(nextMonthDate,curSelectedDate2,true);
+    }
+    private void initHeaderText(Date date){
+        String text=DateUtil.getCompareTodayText(date);
+        String headerTextString=String.format(getResources().getString(R.string.date_item_header),text);
+        headerText.setText(headerTextString);
     }
     private void initRecyclerView(){
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         tempDate=new Date();
         dataList= ListItemDao.queryAllItemsExceptNoContent(DateUtil.getYearMonthDayNumberic(tempDate));
-        for(int i=0;i<dataList.size();i++){
-            LogUtil.e("id="+dataList.get(i).getId());
-        }
         dateAdapter=new DateAdapter(this,dataList);
-        View headerView= LayoutInflater.from(this).inflate(R.layout.date_header_item,null);
-        dateAdapter.addHeaderView(headerView);
         recyclerView.setAdapter(dateAdapter);
     }
 }

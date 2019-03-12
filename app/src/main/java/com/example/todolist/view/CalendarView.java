@@ -11,6 +11,8 @@ import android.view.View;
 
 import com.example.todolist.R;
 import com.example.todolist.activity.DateAct;
+import com.example.todolist.bean.DayStatus;
+import com.example.todolist.db.DayStatusDao;
 import com.example.todolist.listener.OnItemSelectedListener;
 import com.example.todolist.utils.DateUtil;
 import com.example.todolist.utils.DisplayUtil;
@@ -48,6 +50,7 @@ public class CalendarView extends View {
     private int dayNum;//这个月有多少天
     private float dayTextHeight;
     private OnItemSelectedListener onItemSelectedListener;
+    private int[] status=new int[42];//对应每天的list完成状况
 
     public CalendarView(Context context) {
         this(context,null);
@@ -115,6 +118,9 @@ public class CalendarView extends View {
         //计算42个数据
         calculateDate();
 
+        //画当天状况的背景
+        drawStatusBg(canvas);
+
         //画selected背景
         drawSelectedBg(canvas);
 
@@ -170,6 +176,43 @@ public class CalendarView extends View {
             dayText[i]=-1;
         }
     }
+    private void calculateStatus(){
+        for(int i=0;i<curMonthStartIndex;i++){
+            status[i]=-1;
+        }
+        for(int i=curMonthEndIndex+1;i<42;i++){
+            status[i]=-1;
+        }
+        Date tempDate;
+        calendar.setTime(curMonthDate);
+        for(int i=curMonthStartIndex;i<=curMonthEndIndex;i++){
+            calendar.set(Calendar.DAY_OF_MONTH,dayText[i]);
+            tempDate=calendar.getTime();
+            String time=DateUtil.getYearMonthDayNumberic(tempDate);
+            status[i]=DayStatusDao.queryStatus(time);
+        }
+    }
+    private void drawStatusBg(Canvas canvas){
+        calculateStatus();
+        for(int i=curMonthStartIndex;i<=curMonthEndIndex;i++){
+            int row=getRow(i);
+            int col=getCol(i);
+            float left=leftPadding+col*cellWidth;
+            float top=row*cellHeight;
+            if(status[i]== DayStatus.BAD){
+                //todo 根据不同的情况，设置不同的背景颜色
+                dayStatusBgPaint.setColor(dayStatusBgColor);
+            }else if(status[i]==DayStatus.ORDINARY){
+
+            }else if(status[i]==DayStatus.GOOD){
+
+            }else{
+
+            }
+            canvas.drawRect(left,top,left+cellWidth,top+cellHeight,dayStatusBgPaint);
+        }
+
+    }
     private String getYearAndMonth(Date date){
         calendar.setTime(date);
         int year=calendar.get(Calendar.YEAR);
@@ -186,7 +229,7 @@ public class CalendarView extends View {
                 boolean isSetSelectedDate=setSelectedDate(x,y);
                 if(isSetSelectedDate){
                     invalidate();
-                    onItemSelectedListener.onItemSelected(selectedDate,this);
+                    onItemSelectedListener.onItemSelected(selectedDate);
                 }
                 break;
         }
@@ -237,13 +280,16 @@ public class CalendarView extends View {
     public void setOnItemSelectedListener(OnItemSelectedListener onItemSelectedListener){
         this.onItemSelectedListener=onItemSelectedListener;
     }
-    public void setCurMonthDate(Date curMonthDate){
-        this.curMonthDate=curMonthDate;
-        this.postInvalidate();
-    }
     public void setSelectedDate(Date selectedDate){
         this.selectedDate=selectedDate;
         this.postInvalidate();
+    }
+    public void setCurMonthAndSelectedDate(Date curMonthDate,Date selectedDate,boolean isInvalidate){
+        this.curMonthDate=curMonthDate;
+        this.selectedDate=selectedDate;
+        if(isInvalidate){
+            this.postInvalidate();
+        }
     }
     public Date getSelectedDate(){
         return selectedDate;

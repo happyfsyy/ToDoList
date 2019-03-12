@@ -39,9 +39,16 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
     </androidx.viewpager.widget.ViewPager>
+    <TextView
+        android:id="@+id/date_item_header_text"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/date_item_header"
+        android:padding="@dimen/default_layout_padding"
+        android:background="#fff"
+        android:layout_marginTop="10dp" />
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/date_recyclerView"
-        android:layout_marginTop="10dp"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="#fff">

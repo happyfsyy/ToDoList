@@ -1,6 +1,7 @@
 package com.example.todolist.bean;
 
 import java.util.Date;
+import java.util.List;
 
 public class ListItem {
     public  static final int NO_CONTENT=101;
@@ -11,9 +12,9 @@ public class ListItem {
     private String content;
     private int status;
     private String time;
-    public static final int TYPE_HEADER=105;
     public static final int TYPE_NORMAL=106;
     public static final int TYPE_EMPTY=107;
+
     public ListItem(String content,int status,String time){
         this.content=content;
         this.status=status;

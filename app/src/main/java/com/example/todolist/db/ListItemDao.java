@@ -53,8 +53,14 @@ public class ListItemDao {
         cursor.close();
         return  list;
     }
-    public static void updateItem(long id, ContentValues values){
+    public static void updateItem(long id,int status,String content){
         SQLiteDatabase db=dbHelper.getWritableDatabase();
+        ContentValues values=DataUtil.generateCV(content,status);
+        db.update("ListItem",values,"l_id=?",new String[]{id+""});
+    }
+    public static void updateItem(long id,int status){
+        SQLiteDatabase db=dbHelper.getWritableDatabase();
+        ContentValues values=DataUtil.generateCV(status);
         db.update("ListItem",values,"l_id=?",new String[]{id+""});
     }
     public static void deleteItem(long id){

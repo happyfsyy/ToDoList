@@ -4,6 +4,14 @@
     <string name="year_month_day_numberic">%d/%02d/%02d</string>
     <string name="year_and_month">%d年%02d月</string>
     <string name="year_month_day">%d年%02d月%02d日</string>
-    <string name="empty_item_text">没有日常</string>
-    <string name="date_item_header">我的list(%d天后):</string>
+    <string name="empty_item_text">没有日程</string>
+    <string name="date_item_header">我的List(%s):</string>
+    <string name="before_day_num">%d天前</string>
+    <string name="after_day_num">%d天后</string>
+    <string name="today">今天</string>
+    <string name="yesterday">昨天</string>
+    <string name="before_yesterday">前天</string>
+    <string name="tomorrow">明天</string>
+    <string name="after_tomorrow">后天</string>
+    <string name="alarm_label">闹钟</string>
 </resources>
