@@ -17,4 +17,6 @@
     <string name="calendar">日历</string>
     <string name="graph">图表</string>
     <string name="alarm">闹钟</string>
+    <string name="hour_minute">%02d:%02d</string>
+    <string name="no_alarm">没有闹钟</string>
 </resources>

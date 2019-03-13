@@ -13,7 +13,7 @@ import com.example.todolist.utils.DateUtil;
 import java.util.Date;
 
 public class DayStatusDao {
-    private static MyOpenHelper dbHelper=new MyOpenHelper(MyApplication.getContext(),"list.db",null,1);
+    private static MyOpenHelper dbHelper=new MyOpenHelper(MyApplication.getContext(),"list.db",null,2);
     public static void insertDayStatus(DayStatus dayStatus){
         SQLiteDatabase database=dbHelper.getWritableDatabase();
         ContentValues values= DataUtil.getDayStatusCV(dayStatus);

@@ -14,7 +14,7 @@ import java.util.Date;
 
 public class DateUtil {
     private static Resources resources= MyApplication.getContext().getResources();
-//    private static SimpleDateFormat simpleDateFormat= new SimpleDateFormat("yyyy/MM/dd");
+    private static SimpleDateFormat simpleDateFormat= new SimpleDateFormat("HH:mm");
     private static Calendar calendar=Calendar.getInstance();
     public static String getYearMonthDayNumberic(Date date){
         calendar.setTime(date);
@@ -35,6 +35,12 @@ public class DateUtil {
         int month=calendar.get(Calendar.MONTH)+1;
         int day=calendar.get(Calendar.DAY_OF_MONTH);
         return String.format(resources.getString(R.string.year_month_day),year,month,day);
+    }
+    public static String getHourAndMinute(int hour,int minute){
+        return String.format(resources.getString(R.string.hour_minute),hour,minute);
+    }
+    public static String getHourAndMinute(Date date){
+        return simpleDateFormat.format(date);
     }
     public static String getCompareTodayText(Date date){
         Date todayDate=new Date();

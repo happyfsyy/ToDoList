@@ -1,5 +1,6 @@
 package com.example.todolist.activity;
 
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.View;
 
@@ -38,7 +39,6 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
             savedIndex=savedInstanceState.getInt("savedIndex");
         }
         setTabSelection(savedIndex);
-
     }
     private void initViews(){
         toolbar=findViewById(R.id.main_toolbar);

@@ -15,7 +15,7 @@ import java.util.Date;
 import java.util.List;
 
 public class ListItemDao {
-    private static MyOpenHelper dbHelper=new MyOpenHelper(MyApplication.getContext(),"list.db",null,1);
+    private static MyOpenHelper dbHelper=new MyOpenHelper(MyApplication.getContext(),"list.db",null,2);
     public static long insertListItem(ListItem listItem){
         SQLiteDatabase database=dbHelper.getWritableDatabase();
         long id=database.insert("ListItem",null, DataUtil.getListItemCV(listItem));

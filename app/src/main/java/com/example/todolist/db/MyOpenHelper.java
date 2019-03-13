@@ -13,6 +13,9 @@ public class MyOpenHelper extends SQLiteOpenHelper {
     private static final String CREATE_DAY_STATUS="create table DayStatus("
             +"f_id integer primary key autoincrement,"
             +"time date,status integer)";
+    private static final String CREATE_ALARM_ITEM="create table AlarmItem("
+            +"a_id integer primary key autoincrement,"
+            +"time char(5),note varchar,isOpen boolean)";
     public MyOpenHelper(@Nullable Context context, @Nullable String name, @Nullable SQLiteDatabase.CursorFactory factory, int version) {
         super(context, name, factory, version);
     }
@@ -21,10 +24,14 @@ public class MyOpenHelper extends SQLiteOpenHelper {
     public void onCreate(SQLiteDatabase db) {
         db.execSQL(CREATE_LIST_ITEM);
         db.execSQL(CREATE_DAY_STATUS);
+        db.execSQL(CREATE_ALARM_ITEM);
     }
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-
+        switch (oldVersion){
+            case 1:
+                db.execSQL(CREATE_ALARM_ITEM);
+        }
     }
 }
