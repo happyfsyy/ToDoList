@@ -1,37 +1,30 @@
 package com.example.todolist.activity;
 
 import android.content.ContentValues;
+import android.content.Context;
 import android.content.Intent;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextUtils;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.Button;
+import android.view.ViewGroup;
 import android.widget.EditText;
-import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.example.todolist.R;
-import com.example.todolist.adapter.DateAdapter;
 import com.example.todolist.adapter.ListAdapter;
-import com.example.todolist.bean.DayStatus;
 import com.example.todolist.bean.ListItem;
-import com.example.todolist.db.DayStatusDao;
 import com.example.todolist.db.ListItemDao;
-import com.example.todolist.db.MyOpenHelper;
 import com.example.todolist.listener.OnBackPressListener;
 import com.example.todolist.listener.OnClickListener;
-import com.example.todolist.listener.OnFocusChangeListener;
 import com.example.todolist.listener.OnNextListener;
 import com.example.todolist.listener.OnTextChangeListener;
-import com.example.todolist.utils.DataUtil;
 import com.example.todolist.utils.DateUtil;
 import com.example.todolist.utils.LogUtil;
-import com.example.todolist.utils.SoftKeyboardUtil;
 import com.example.todolist.utils.ToastUtil;
 
 import java.util.ArrayList;
@@ -39,15 +32,18 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.widget.Toolbar;
+import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.DefaultItemAnimator;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-public class ListActivity extends BaseActivity{
-    private Toolbar toolbar;
+public class ListFragment extends Fragment {
+    private Context context;
+    private View mainLayout;
     private TextView dateTextView;
     private LinearLayoutManager layoutManager;
     private RecyclerView recyclerView;
@@ -58,50 +54,37 @@ public class ListActivity extends BaseActivity{
     private long preTime;
 
     @Override
-    protected void onCreate(@Nullable Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_list);
+    public void onAttach(@NonNull Context context) {
+        super.onAttach(context);
+        this.context=context;
+    }
+    @Nullable
+    @Override
+    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        mainLayout= LayoutInflater.from(context).inflate(R.layout.activity_list,container,false);
         initParams();
         initViews();
+        return mainLayout;
     }
+
     private void initParams(){
         Calendar calendar=Calendar.getInstance();
         date=calendar.getTime();
     }
     private void initViews(){
-        toolbar=findViewById(R.id.list_toolbar);
-        dateTextView=findViewById(R.id.list_date);
-        recyclerView=findViewById(R.id.list_recycler_view);
+        dateTextView=mainLayout.findViewById(R.id.list_date);
+        recyclerView=mainLayout.findViewById(R.id.list_recycler_view);
 
-        initToolbar();
         initDate();
         initRecyclerView();
     }
 
-    private void initToolbar(){
-        setSupportActionBar(toolbar);
-        ActionBar actionBar=getSupportActionBar();
-        if(actionBar!=null){
-            actionBar.setDisplayHomeAsUpEnabled(false);
-            actionBar.setDisplayShowTitleEnabled(false);
-        }
-    }
     private void initDate(){
         time=DateUtil.getYearMonthDayNumberic(date);
         dateTextView.setText(time);
-        dateTextView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-//                for(int i=0;i<dataList.size();i++){
-//                    ListItemDao.deleteItem(dataList.get(i).getId());
-//                }
-                Intent intent=new Intent(ListActivity.this, DateAct.class);
-                startActivity(intent);
-            }
-        });
     }
     private void initRecyclerView(){
-        layoutManager=new LinearLayoutManager(this);
+        layoutManager=new LinearLayoutManager(context);
         recyclerView.setLayoutManager(layoutManager);
         initDataList();
         adapter=new ListAdapter(dataList);
@@ -240,22 +223,6 @@ public class ListActivity extends BaseActivity{
         dataList.get(pos).setStatus(status);
         adapter.notifyItemChanged(pos);
         ListItemDao.updateItem(dataList.get(pos).getId(),status);
-    }
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.list_menu,menu);
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()){
-            case R.id.list_settings:
-                ToastUtil.showToast("跳转到闹钟设置界面");
-                break;
-        }
-        return true;
     }
 
     /**

@@ -3,11 +3,9 @@ package com.example.todolist.adapter;
 import android.animation.LayoutTransition;
 import android.content.Context;
 import android.text.Editable;
-import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
@@ -18,7 +16,6 @@ import com.example.todolist.R;
 import com.example.todolist.bean.ListItem;
 import com.example.todolist.listener.OnBackPressListener;
 import com.example.todolist.listener.OnClickListener;
-import com.example.todolist.listener.OnFocusChangeListener;
 import com.example.todolist.listener.OnNextListener;
 import com.example.todolist.listener.OnTextChangeListener;
 import com.example.todolist.utils.LogUtil;
@@ -108,12 +105,16 @@ public class ListAdapter extends RecyclerView.Adapter<ListAdapter.ViewHolder> {
                 return true;
             }
         });
+        LogUtil.e("setOnKeyListener");
         viewHolder.content_edit.setOnKeyListener(new View.OnKeyListener() {
             @Override
             public boolean onKey(View v, int keyCode, KeyEvent event) {
+                LogUtil.e("keyCode="+keyCode+"\tevent="+event.getAction());
+                LogUtil.e("keycode_del="+KeyEvent.KEYCODE_DEL+"\taction_down="+KeyEvent.ACTION_DOWN);
                 if(event.getAction()==KeyEvent.ACTION_DOWN&&
                     event.getKeyCode()==KeyEvent.KEYCODE_DEL){
                     EditText editText=(EditText)v;
+                    LogUtil.e("执行onBackPress了");
                     onBackPressListener.onBackPress(editText,viewHolder.getAdapterPosition());
                 }
                 return false;
@@ -160,7 +161,7 @@ public class ListAdapter extends RecyclerView.Adapter<ListAdapter.ViewHolder> {
                 holder.content_edit.setVisibility(View.GONE);
                 holder.content_text.setVisibility(View.VISIBLE);
                 holder.content_text.setText(content);
-                //todo holder.status.setResources() 完成按钮
+                holder.status.setImageResource(R.drawable.finish);
                 holder.finish.setVisibility(View.INVISIBLE);
                 holder.unFinish.setVisibility(View.INVISIBLE);
                 break;
@@ -168,7 +169,7 @@ public class ListAdapter extends RecyclerView.Adapter<ListAdapter.ViewHolder> {
                 holder.content_edit.setVisibility(View.GONE);
                 holder.content_text.setVisibility(View.VISIBLE);
                 holder.content_text.setText(content);
-                //todo holder.status.setResources() 未完成按钮
+                holder.status.setImageResource(R.drawable.un_finish);
                 holder.finish.setVisibility(View.INVISIBLE);
                 holder.unFinish.setVisibility(View.INVISIBLE);
                 break;

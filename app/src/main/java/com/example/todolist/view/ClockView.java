@@ -8,6 +8,7 @@ import android.graphics.RectF;
 import android.util.AttributeSet;
 import android.view.View;
 
+import com.example.todolist.R;
 import com.example.todolist.utils.DisplayUtil;
 
 import java.util.Calendar;
@@ -20,8 +21,11 @@ public class ClockView extends View {
     private float height;
     private Paint mPaint;
     private float mStrokeWidth;
-    private int shortLineColor;
-    private int longLineColor;
+    private int shortLineColor=getResources().getColor(R.color.week_text_color);
+    private int longLineColor=getResources().getColor(R.color.day_text_color);
+    private int textColor=getResources().getColor(R.color.default_text_color);
+    private int circleColor=getResources().getColor(R.color.default_text_color);
+    private int pointerColor=getResources().getColor(R.color.default_text_color);
     private float textHeight;
     private float descent;
     private Calendar calendar;
@@ -69,21 +73,26 @@ public class ClockView extends View {
         circleY=height/2;
         float radius=circleX-mStrokeWidth/2;
         mPaint.setStyle(Paint.Style.STROKE);
-        mPaint.setColor(Color.BLACK);
+        mPaint.setColor(circleColor);
         canvas.drawCircle(circleX,circleY,radius,mPaint);
+
         for(int i=0;i<60;i++){
             if(i%5==0){
                 //todo setLineColor,setStrokeWidth
                 mPaint.setStrokeWidth(5);
-                canvas.drawLine(circleX,0,circleX,60,mPaint);
+                mPaint.setColor(longLineColor);
+                canvas.drawLine(circleX,mStrokeWidth/2,circleX,60,mPaint);
                 String text=String.valueOf(i/5);
                 if(text.equals("0"))
                     text="12";
                 float x=(width-mPaint.measureText(text))/2;
+                mPaint.setStyle(Paint.Style.FILL);
+                mPaint.setColor(textColor);
                 canvas.drawText(text,x,60+textHeight-descent,mPaint);
             }else{
                 mPaint.setStrokeWidth(3);
-                canvas.drawLine(circleX,0,circleX,30,mPaint);
+                mPaint.setColor(shortLineColor);
+                canvas.drawLine(circleX,mStrokeWidth/2,circleX,30,mPaint);
             }
             canvas.rotate(6,circleX,circleY);
         }
@@ -105,6 +114,7 @@ public class ClockView extends View {
         canvas.save();
         canvas.rotate(hourAngle);
         RectF rectF=new RectF(-hourPointerWidth/2,-circleX*3/5,hourPointerWidth/2,pointerEndLength);
+        mPaint.setColor(pointerColor);
         mPaint.setStyle(Paint.Style.FILL);
         canvas.drawRoundRect(rectF,DisplayUtil.dp2px(10),DisplayUtil.dp2px(10),mPaint);
         canvas.restore();

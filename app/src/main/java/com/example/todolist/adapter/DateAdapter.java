@@ -15,7 +15,7 @@ import java.util.List;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
-public class DateAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
+public class DateAdapter extends RecyclerView.Adapter<DateAdapter.NormalViewHolder> {
 
     class NormalViewHolder extends ListAdapter.ViewHolder {
         ImageView status;
@@ -37,7 +37,7 @@ public class DateAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     }
     @NonNull
     @Override
-    public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+    public DateAdapter.NormalViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View itemView=null;
         if(viewType==ListItem.TYPE_EMPTY){
             itemView=LayoutInflater.from(context).inflate(R.layout.date_empty_item,parent,false);
@@ -48,14 +48,18 @@ public class DateAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     }
 
     @Override
-    public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull DateAdapter.NormalViewHolder holder, int position) {
         int itemViewType=getItemViewType(position);
         if(itemViewType==ListItem.TYPE_NORMAL){
             int status=dataList.get(position).getStatus();
             String content=dataList.get(position).getContent();
             //todo 这里根据status的情况，setImageRes，完成未完成
-            ((NormalViewHolder)holder).status.setImageResource(R.drawable.emotion1);
-            ((NormalViewHolder)holder).content.setText(content);
+            if(status==ListItem.FINISH){
+                holder.status.setImageResource(R.drawable.finish);
+            }else if(status==ListItem.UNFINISH){
+                holder.status.setImageResource(R.drawable.un_finish);
+            }
+            holder.content.setText(content);
         }
     }
 

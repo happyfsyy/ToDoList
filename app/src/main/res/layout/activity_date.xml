@@ -3,37 +3,16 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:background="#999999">
-    <RelativeLayout
+    android:background="@color/colorSelected">
+    <TextView
+        android:id="@+id/date_year_month"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@color/colorTheme"
-        android:paddingTop="@dimen/default_inner_padding"
-        android:paddingBottom="@dimen/default_inner_padding">
-        <ImageView
-            android:id="@+id/date_last_month"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentStart="true"
-            android:layout_centerVertical="true"
-            android:padding="@dimen/default_margin"
-            android:src="@drawable/last_month" />
-        <ImageView
-            android:id="@+id/date_next_month"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentEnd="true"
-            android:layout_centerVertical="true"
-            android:padding="@dimen/default_margin"
-            android:src="@drawable/next_month" />
-        <TextView
-            android:id="@+id/date_year_month"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerInParent="true"
-            android:textSize="20sp"
-            android:textColor="#fff"/>
-    </RelativeLayout>
+        android:gravity="center"
+        android:textSize="18sp"
+        android:textColor="@color/default_text_color"
+        android:padding="@dimen/default_inner_padding"
+        android:background="@color/color_white"/>
     <androidx.viewpager.widget.ViewPager
         android:id="@+id/date_viewpager"
         android:layout_width="match_parent"
@@ -45,12 +24,14 @@
         android:layout_height="wrap_content"
         android:text="@string/date_item_header"
         android:padding="@dimen/default_layout_padding"
-        android:background="#fff"
-        android:layout_marginTop="10dp" />
+        android:background="@color/color_white"
+        android:layout_marginTop="10dp"
+        android:textSize="16sp"
+        android:textColor="@color/day_text_color"/>
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/date_recyclerView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="#fff">
+        android:background="@color/color_white">
     </androidx.recyclerview.widget.RecyclerView>
 </LinearLayout>

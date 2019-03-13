@@ -9,12 +9,8 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/NoActionbarTheme">
-        <activity android:name=".activity.ListActivity"
-            android:windowSoftInputMode="stateHidden|adjustResize">
-        </activity>
-        <activity android:name=".activity.DateAct">
-        </activity>
-        <activity android:name=".activity.AlarmAct">
+        <activity android:name=".activity.MainActivity"
+            android:windowSoftInputMode="stateHidden|adjustPan">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
                 <category android:name="android.intent.category.LAUNCHER"/>

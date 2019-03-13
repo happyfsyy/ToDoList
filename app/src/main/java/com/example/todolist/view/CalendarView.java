@@ -10,13 +10,11 @@ import android.view.MotionEvent;
 import android.view.View;
 
 import com.example.todolist.R;
-import com.example.todolist.activity.DateAct;
 import com.example.todolist.bean.DayStatus;
 import com.example.todolist.db.DayStatusDao;
 import com.example.todolist.listener.OnItemSelectedListener;
 import com.example.todolist.utils.DateUtil;
 import com.example.todolist.utils.DisplayUtil;
-import com.example.todolist.utils.LogUtil;
 
 import java.util.Calendar;
 import java.util.Date;
@@ -31,14 +29,14 @@ public class CalendarView extends View {
     private float cellHeight;
     private float cellWidth;
     private Paint weekPaint;//日、一
-    private int weekTextColor= Color.parseColor("#9a9a9a");
+    private int weekTextColor= getResources().getColor(R.color.week_text_color);
     private Paint dayPaint;//1、2
-    private int dayTextColor=Color.parseColor("#616161");
+    private int dayTextColor=getResources().getColor(R.color.day_text_color);
     private Paint dayStatusBgPaint;//背后的阴影效果，正方形
     private int dayStatusBgColor=Color.parseColor("#f4f4f4");
     private Paint selectedBgPaint;//圆圈
-    private int selectedBgColor=Color.YELLOW;
-    private int todayColor=Color.RED;
+    private int selectedBgColor=getResources().getColor(R.color.selected_circle_color);
+    private int todayColor=getResources().getColor(R.color.today_color);
     private Calendar calendar;//这就是个变量
     private Date todayDate;//不变的，就是今天
     private Date curMonthDate;
@@ -119,7 +117,7 @@ public class CalendarView extends View {
         calculateDate();
 
         //画当天状况的背景
-        drawStatusBg(canvas);
+//        drawStatusBg(canvas);
 
         //画selected背景
         drawSelectedBg(canvas);

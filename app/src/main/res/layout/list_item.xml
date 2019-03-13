@@ -10,7 +10,7 @@
         android:id="@+id/item_status"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:src="@drawable/emotion1"
+        android:src="@drawable/circle"
         android:layout_gravity="center_vertical"
         />
     <LinearLayout
@@ -19,26 +19,29 @@
         android:layout_weight="1"
         android:layout_marginStart="@dimen/default_layout_padding"
         android:layout_marginEnd="@dimen/default_inner_padding"
-        android:orientation="vertical">
+        android:orientation="vertical"
+        android:layout_gravity="center_vertical">
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal">
-            <EditText
+            <com.example.todolist.view.DeletableEdiText
                 android:id="@+id/item_content_edit"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:singleLine="true"
                 android:imeOptions="actionNext"
                 android:background="@android:color/transparent"
-                android:textSize="16sp"/>
+                android:textSize="16sp"
+                android:textColor="@color/day_text_color"/>
             <TextView
                 android:id="@+id/item_content_text"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:singleLine="true"
                 android:textSize="16sp"
-                android:visibility="gone"/>
+                android:visibility="gone"
+                android:textColor="@color/week_text_color"/>
         </LinearLayout>
         <include layout="@layout/horizontal_line"
             android:layout_width="match_parent"
@@ -53,7 +56,7 @@
         android:paddingEnd="0dp"
         android:paddingTop="@dimen/default_inner_padding"
         android:paddingBottom="@dimen/default_inner_padding"
-        android:src="@drawable/emotion1"
+        android:src="@drawable/finish"
         android:layout_gravity="center_vertical"
         android:visibility="invisible"
         />
@@ -61,7 +64,7 @@
         android:id="@+id/item_unfinish"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:src="@drawable/emotion1"
+        android:src="@drawable/un_finish"
         android:paddingStart="@dimen/default_inner_padding"
         android:paddingEnd="0dp"
         android:paddingTop="@dimen/default_inner_padding"

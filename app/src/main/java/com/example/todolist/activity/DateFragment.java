@@ -1,6 +1,6 @@
 package com.example.todolist.activity;
 
-import android.content.ContentValues;
+import android.content.Context;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -25,14 +25,16 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.viewpager.widget.ViewPager;
 
-public class DateAct extends BaseActivity{
-    private ImageView lastMonth;
-    private ImageView nextMonth;
+public class DateFragment extends Fragment {
+    private View mainLayout;
+    private Context context;
     private TextView yearAndMonth;
     private static Calendar calendar;
     private ViewPager viewPager;
@@ -46,21 +48,27 @@ public class DateAct extends BaseActivity{
     private List<ListItem> dataList;
     private DateAdapter dateAdapter;
     private OnItemSelectedListener onItemSelectedListener;
-    @Override
-    protected void onCreate(@Nullable Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_date);
 
-        initViews();
+    @Override
+    public void onAttach(@NonNull Context context) {
+        this.context=context;
+        super.onAttach(context);
     }
+
+    @Nullable
+    @Override
+    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        mainLayout=inflater.inflate(R.layout.activity_date,container,false);
+        initViews();
+        return mainLayout;
+    }
+
     private void initViews(){
         calendar=Calendar.getInstance();
-        viewPager=findViewById(R.id.date_viewpager);
-        lastMonth=findViewById(R.id.date_last_month);
-        nextMonth=findViewById(R.id.date_next_month);
-        yearAndMonth=findViewById(R.id.date_year_month);
-        headerText=findViewById(R.id.date_item_header_text);
-        recyclerView=findViewById(R.id.date_recyclerView);
+        viewPager=mainLayout.findViewById(R.id.date_viewpager);
+        yearAndMonth=mainLayout.findViewById(R.id.date_year_month);
+        headerText=mainLayout.findViewById(R.id.date_item_header_text);
+        recyclerView=mainLayout.findViewById(R.id.date_recyclerView);
         initYearAndMonthHeader();
         initCalendarViews();
         initViewPager();
@@ -70,19 +78,6 @@ public class DateAct extends BaseActivity{
     private void initYearAndMonthHeader(){
         String yearAndMonthText=DateUtil.getYearAndMonth(tempDate);
         yearAndMonth.setText(yearAndMonthText);
-        lastMonth.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                ToastUtil.showToast("我想把这个按钮删掉");
-            }
-        });
-        nextMonth.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                LogUtil.e("我点击了下个月的按钮");
-                viewPager.setCurrentItem(2);
-            }
-        });
     }
     private void clickLast(){
         calendar.add(Calendar.MONTH,-1);
@@ -113,7 +108,7 @@ public class DateAct extends BaseActivity{
             }
         };
         for(int i=0;i<3;i++){
-            calendarViews[i]=new CalendarView(this);
+            calendarViews[i]=new CalendarView(context);
             Date curMonthDate=calendar.getTime();
             Date lastMonthDate=DateUtil.getLastMonthDate(curMonthDate);
             Date nextMonthDate=DateUtil.getNextMonthDate(curMonthDate);
@@ -191,10 +186,10 @@ public class DateAct extends BaseActivity{
         headerText.setText(headerTextString);
     }
     private void initRecyclerView(){
-        recyclerView.setLayoutManager(new LinearLayoutManager(this));
+        recyclerView.setLayoutManager(new LinearLayoutManager(context));
         tempDate=new Date();
         dataList= ListItemDao.queryAllItemsExceptNoContent(DateUtil.getYearMonthDayNumberic(tempDate));
-        dateAdapter=new DateAdapter(this,dataList);
+        dateAdapter=new DateAdapter(context,dataList);
         recyclerView.setAdapter(dateAdapter);
     }
 }
