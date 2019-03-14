@@ -2,17 +2,16 @@
 <resources>
     <color name="colorPrimary">#FFC107</color>
     <color name="colorPrimaryDark">#B2DEE4</color>
-    <color name="colorAccent">#D81B60</color>
-    <color name="colorTheme">#D18516</color>
-    <color name="colorTheme2">#ffffff</color>
+    <color name="colorAccent">#E97878</color>
+    <color name="colorTheme">#ffffff</color>
     <color name="colorThemeDark">#9B6F2D</color>
-    <color name="colorSelected">#d3d3d3</color>
+    <color name="colorSelected">#e3e3e3</color>
     <color name="line_color">#d3d3d3</color>
     <color name="yearAndMonthHeader">#6D4242</color>
     <color name="color_white">#ffffff</color>
-    <color name="day_text_color">#616161</color>
-    <color name="week_text_color">#aaaaaa</color>
+    <color name="day_text_color">#555555</color>
+    <color name="week_text_color">#999999</color>
     <color name="default_text_color">#333333</color>
-    <color name="today_color">#FFC107</color>
-    <color name="selected_circle_color">#F1DC99</color>
+    <color name="today_color">#E91E63</color>
+    <color name="selected_circle_color">#E9A691</color>
 </resources>

@@ -81,7 +81,7 @@ public class ListFragment extends Fragment {
 
     private void initDate(){
         time=DateUtil.getYearMonthDayNumberic(date);
-        dateTextView.setText(time);
+        dateTextView.setText(DateUtil.getYearMonthDay(date));
     }
     private void initRecyclerView(){
         layoutManager=new LinearLayoutManager(context);
@@ -181,7 +181,6 @@ public class ListFragment extends Fragment {
     private void initDataList(){
         dataList= ListItemDao.queryAllItems(time);
         LogUtil.e("dataList.size():"+dataList.size());
-
         if(dataList.size()==0){
             ListItem item=createEmptyItem();
             dataList.add(item);

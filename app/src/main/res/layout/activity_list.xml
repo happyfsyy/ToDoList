@@ -14,7 +14,8 @@
         android:textSize="18sp"
         android:layout_gravity="center"
         android:background="@color/color_white"
-        android:textColor="@color/default_text_color"/>
+        android:textColor="@color/default_text_color"
+        android:gravity="center"/>
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/list_recycler_view"
         android:layout_width="match_parent"

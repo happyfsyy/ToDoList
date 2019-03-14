@@ -1,6 +1,7 @@
 package com.example.todolist.activity;
 
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Interpolator;
 import android.os.Bundle;
@@ -19,6 +20,8 @@ import com.example.todolist.db.AlarmItemDao;
 import com.example.todolist.utils.DateUtil;
 import com.example.todolist.utils.DisplayUtil;
 import com.example.todolist.utils.LogUtil;
+import com.example.todolist.utils.ToastUtil;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -40,6 +43,7 @@ public class AlarmFragment extends Fragment {
     private RecyclerView recyclerView;
     private List<AlarmItem> dataList;
     private AlarmAdapter adapter;
+    private FloatingActionButton add;
 
     @Override
     public void onAttach(@NonNull Context context) {
@@ -62,13 +66,23 @@ public class AlarmFragment extends Fragment {
     private void initViews(){
         clockLayout=mainLayout.findViewById(R.id.clock_layout);
         recyclerView=mainLayout.findViewById(R.id.alarm_recyclerview);
+        add=mainLayout.findViewById(R.id.alarm_add);
+        initAdd();
         initClockLayout();
         initRecyclerView();
     }
-
+    private void initAdd(){
+        add.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent=new Intent(context,EditAlarmAct.class);
+                startActivity(intent);
+            }
+        });
+    }
     private void initClockLayout(){
         int height= (int)(DisplayUtil.getScreenWidth()*0.8f);
-        LinearLayout.LayoutParams params=new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,height);
+        RelativeLayout.LayoutParams params=new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,height);
         clockLayout.setLayoutParams(params);
     }
     private void initRecyclerView(){
@@ -79,7 +93,7 @@ public class AlarmFragment extends Fragment {
     }
     private void initList(){
         if(preferences.getBoolean("isFirst",true)){
-            AlarmItem item=new AlarmItem("20:00","该记录今天的成果了！",true);
+            AlarmItem item=new AlarmItem("20:00",getString(R.string.new_alarm_note),true);
             long id=AlarmItemDao.insertAlarmItem(item);
             item.setId(id);
 

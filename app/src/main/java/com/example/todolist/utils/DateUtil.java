@@ -36,6 +36,12 @@ public class DateUtil {
         int day=calendar.get(Calendar.DAY_OF_MONTH);
         return String.format(resources.getString(R.string.year_month_day),year,month,day);
     }
+    public static String getMonthAndDay(Date date){
+        calendar.setTime(date);
+        int month=calendar.get(Calendar.MONTH)+1;
+        int day=calendar.get(Calendar.DAY_OF_MONTH);
+        return String.format(resources.getString(R.string.month_and_day),month,day);
+    }
     public static String getHourAndMinute(int hour,int minute){
         return String.format(resources.getString(R.string.hour_minute),hour,minute);
     }

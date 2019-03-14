@@ -4,6 +4,7 @@
     <string name="year_month_day_numberic">%d/%02d/%02d</string>
     <string name="year_and_month">%d年%02d月</string>
     <string name="year_month_day">%d年%02d月%02d日</string>
+    <string name="month_and_day">%02d月%02d日</string>
     <string name="empty_item_text">没有日程</string>
     <string name="date_item_header">我的List(%s):</string>
     <string name="before_day_num">%d天前</string>
@@ -19,4 +20,10 @@
     <string name="alarm">闹钟</string>
     <string name="hour_minute">%02d:%02d</string>
     <string name="no_alarm">没有闹钟</string>
+    <string name="hour_or_minute">%02d</string>
+    <string name="edit_alarm">编辑闹钟</string>
+    <string name="create_alarm">新建闹钟</string>
+    <string name="delete_alarm">删除闹钟</string>
+    <string name="alarm_note">备注:</string>
+    <string name="new_alarm_note">该记录今天的成果了！</string>
 </resources>

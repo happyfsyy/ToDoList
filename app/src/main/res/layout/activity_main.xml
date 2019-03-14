@@ -9,7 +9,7 @@
         android:layout_height="wrap_content"
         android:minHeight="?android:attr/actionBarSize"
         android:theme="@style/ThemeOverlay.AppCompat.Light"
-        android:background="@color/colorTheme2"
+        android:background="@color/colorTheme"
         app:title="@string/home">
     </androidx.appcompat.widget.Toolbar>
     <include layout="@layout/horizontal_line"/>

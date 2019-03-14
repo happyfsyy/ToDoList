@@ -4,4 +4,7 @@
     <dimen name="default_inner_padding">5dp</dimen>
     <dimen name="default_margin">10dp</dimen>
     <dimen name="small_margin">5dp</dimen>
+    <dimen name="medium_padding">20dp</dimen>
+    <dimen name="big_padding">40dp</dimen>
+    <dimen name="big_margin">20dp</dimen>
 </resources>
