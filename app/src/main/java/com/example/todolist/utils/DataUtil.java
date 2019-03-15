@@ -38,4 +38,10 @@ public class DataUtil {
         values.put("isOpen",item.isOpen());
         return values;
     }
+    public static ContentValues getAlarmItemCV(String time,String note){
+        ContentValues values=new ContentValues();
+        values.put("time",time);
+        values.put("note",note);
+        return values;
+    }
 }

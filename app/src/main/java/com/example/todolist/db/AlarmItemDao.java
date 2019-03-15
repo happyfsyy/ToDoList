@@ -8,6 +8,7 @@ import com.example.todolist.activity.MyApplication;
 import com.example.todolist.bean.AlarmItem;
 import com.example.todolist.utils.DataUtil;
 
+import java.nio.DoubleBuffer;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -37,5 +38,10 @@ public class AlarmItemDao {
     public static void deleteAlarmItem(long id){
         SQLiteDatabase db=helper.getWritableDatabase();
         db.delete("AlarmItem","a_id=?",new String[]{id+""});
+    }
+    public static void updateAlarmItem(long id,String time,String note){
+        SQLiteDatabase database= helper.getWritableDatabase();
+        ContentValues values=DataUtil.getAlarmItemCV(time,note);
+        database.update("AlarmItem",values,"a_id=?",new String[]{id+""});
     }
 }

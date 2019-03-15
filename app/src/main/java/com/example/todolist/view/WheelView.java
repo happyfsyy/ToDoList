@@ -41,8 +41,10 @@ public class WheelView extends View {
     private float previousY;
     private float totalScrollY;
     private int itemOffset;
-    private int mOffset;
     private Scroller mScroller;
+    private int selectedIndex;
+    private float firstLineY;
+    private float secondLineY;
 
     public WheelView(Context context) {
         this(context,null);
@@ -74,29 +76,39 @@ public class WheelView extends View {
         linePaint=new Paint(Paint.ANTI_ALIAS_FLAG);
         linePaint.setColor(lineColor);
         linePaint.setStrokeWidth(lineWidth);
+        initPosition=-1;
+    }
+    private void measureHeight(){
+        fontMetrics=centerTextPaint.getFontMetrics();
+        textHeight=fontMetrics.descent-fontMetrics.ascent;
+        itemHeight=textHeight*lineSpacingMultiplier;
+        measuredHeight=(int)((itemVisibleCount-2)*itemHeight);
+    }
+
+    private void initParams(){
+        itemCount=adapter.getItemCount();
+        if(initPosition==-1){
+            initPosition=(itemCount+1)/2;
+        }
+        firstLineY=(itemVisibleCount-2)/2*itemHeight;
+        secondLineY=firstLineY+itemHeight;
     }
 
     @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
         measuredWidth=MeasureSpec.getSize(widthMeasureSpec);
-        fontMetrics=centerTextPaint.getFontMetrics();
-        textHeight=fontMetrics.descent-fontMetrics.ascent;
-        itemHeight=textHeight*lineSpacingMultiplier;
-        measuredHeight=(int)((itemVisibleCount-2)*itemHeight);
+        measureHeight();
+        initParams();
         setMeasuredDimension(measuredWidth,measuredHeight);
     }
 
     @Override
     protected void onDraw(Canvas canvas) {
         //draw line
-        float firstLineY=(itemVisibleCount-2)/2*itemHeight;
-        float secondLineY=firstLineY+itemHeight;
         canvas.drawLine(0,firstLineY,measuredWidth,firstLineY,linePaint);
         canvas.drawLine(0,secondLineY,measuredWidth,secondLineY,linePaint);
 
         //calculate pos
-        itemCount=adapter.getItemCount();
-        initPosition=(itemCount+1)/2;
         int changeNum=(int)(totalScrollY/itemHeight);
         curCenterCellPos=initPosition+changeNum%itemCount;
         if(curCenterCellPos<0){
@@ -123,6 +135,8 @@ public class WheelView extends View {
             float x=(measuredWidth-getTextWidth(visibleItems[i]))/2;
             float y=(i-1)*itemHeight+itemHeight/2-textHeight/2-fontMetrics.ascent;
             if(y+fontMetrics.ascent-itemOffset>=firstLineY&&y+fontMetrics.descent-itemOffset<=secondLineY){
+                int index=curCenterCellPos-(itemVisibleCount/2-i);
+                selectedIndex=getRealIndex(index);
                 canvas.drawText(visibleItems[i],x,y,centerTextPaint);
             }else{
                 canvas.drawText(visibleItems[i],x,y,outerTextPaint);
@@ -145,7 +159,7 @@ public class WheelView extends View {
                 invalidate();
                 break;
             case MotionEvent.ACTION_UP:
-                mOffset=(int)((totalScrollY%itemHeight+itemHeight)%itemHeight);
+                int mOffset=(int)((totalScrollY%itemHeight+itemHeight)%itemHeight);
                 if((float)Math.abs(mOffset)>itemHeight/2.0f){
                     mOffset=(int)(itemHeight-mOffset);
                 }else{
@@ -175,15 +189,21 @@ public class WheelView extends View {
     public void setAdapter(WheelAdapter adapter){
         this.adapter=adapter;
     }
-    public void setItemVisibleCount(int itemVisibleCount){
-        this.itemVisibleCount=itemVisibleCount;
-    }
 
     @Override
     public void computeScroll() {
         if(mScroller.computeScrollOffset()){
             totalScrollY=mScroller.getCurrY();
+            LogUtil.e("totalScrollY="+totalScrollY+"\tfinalY="+mScroller.getFinalY());
             invalidate();
         }
+    }
+
+    public void setCurrentItem(int position){
+        initPosition=position;
+        selectedIndex=position;
+    }
+    public int getSelectedIndex(){
+        return selectedIndex;
     }
 }

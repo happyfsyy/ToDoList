@@ -2,6 +2,7 @@ package com.example.todolist.activity;
 
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.view.KeyEvent;
 import android.view.View;
 
 import com.example.todolist.R;
@@ -27,6 +28,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
     private static final String[] FRAGMENT_TAGS=
             new String[]{"homeFragment","calendarFragment","graphFragment","alarmFragment"};
     private int savedIndex=0;
+    private long preTime;
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -147,5 +149,20 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
     protected void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
         outState.putInt("savedIndex",savedIndex);
+    }
+
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+        if (keyCode == KeyEvent.KEYCODE_BACK) {
+            long curTime=System.currentTimeMillis();
+            if ((curTime - preTime) > 1000 * 2) {
+                ToastUtil.showToast("再按一次退出程序");
+                preTime = curTime;
+            }else{
+                finish();
+            }
+            return true;
+        }
+        return super.onKeyDown(keyCode, event);
     }
 }

@@ -1,6 +1,5 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.example.todolist">
-
     <application
         android:name=".activity.MyApplication"
         android:allowBackup="true"
@@ -16,8 +15,17 @@
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
         </activity>
-        <activity android:name=".activity.EditAlarmAct">
-
-        </activity>
+        <activity android:name=".activity.EditAlarmAct"/>
+        <receiver android:name=".receiver.AlarmReceiver"
+            android:exported="true" android:enabled="true"
+            android:process=":remote">
+            <intent-filter android:priority="1000">
+                <action android:name="com.example.todolist.alarm"/>
+            </intent-filter>
+        </receiver>
+        <activity android:name=".activity.RingAct"/>
+        <service android:name=".receiver.MyService"
+            android:enabled="true" android:exported="true">
+        </service>
     </application>
 </manifest>

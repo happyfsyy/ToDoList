@@ -9,6 +9,7 @@ import android.widget.TextView;
 
 import com.example.todolist.R;
 import com.example.todolist.bean.AlarmItem;
+import com.example.todolist.listener.AlarmOnItemSelectedListener;
 import com.example.todolist.utils.ToastUtil;
 
 import java.util.List;
@@ -21,6 +22,7 @@ public class AlarmAdapter extends RecyclerView.Adapter<AlarmAdapter.AlarmViewHol
     public static final int TYPE_EMPTY=122;
     private Context context;
     private List<AlarmItem> dataList;
+    private AlarmOnItemSelectedListener onItemSelectedListener;
     class AlarmViewHolder extends RecyclerView.ViewHolder{
         TextView time;
         TextView note;
@@ -37,18 +39,29 @@ public class AlarmAdapter extends RecyclerView.Adapter<AlarmAdapter.AlarmViewHol
         this.context=context;
         this.dataList=dataList;
     }
+    public void setOnItemSelectedListener(AlarmOnItemSelectedListener onItemSelectedListener){
+        this.onItemSelectedListener=onItemSelectedListener;
+    }
 
     @NonNull
     @Override
     public AlarmViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         int size=dataList.size();
         View itemView;
-        if(size==0){
+        if(size==1&&viewType==TYPE_EMPTY){
             itemView= LayoutInflater.from(context).inflate(R.layout.alarm_empty_item,parent,false);
         }else{
             itemView=LayoutInflater.from(context).inflate(R.layout.alarm_item,parent,false);
         }
-        return new AlarmViewHolder(itemView,viewType);
+        final AlarmViewHolder viewHolder=new AlarmViewHolder(itemView,viewType);
+        //todo 这个换到onBindViewHolder试试看
+        viewHolder.itemView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                onItemSelectedListener.onItemSelected(viewHolder.getAdapterPosition());
+            }
+        });
+        return viewHolder;
     }
 
     @Override
@@ -63,15 +76,11 @@ public class AlarmAdapter extends RecyclerView.Adapter<AlarmAdapter.AlarmViewHol
         }else{
             holder.toggle.setImageResource(R.drawable.toggle_close);
         }
-        holder.itemView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                ToastUtil.showToast("跳转到闹钟编辑界面");
-            }
-        });
+
         holder.toggle.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                //todo 修改
                 int pos=holder.getAdapterPosition();
                 boolean isOpen=dataList.get(pos).isOpen();
                 dataList.get(pos).setOpen(!isOpen);
@@ -91,8 +100,9 @@ public class AlarmAdapter extends RecyclerView.Adapter<AlarmAdapter.AlarmViewHol
 
     @Override
     public int getItemViewType(int position) {
-        if(dataList.size()==0)
-            return TYPE_EMPTY;
-        return TYPE_NORMAL;
+//        if(dataList.size()==0)
+//            return TYPE_EMPTY;
+//        return TYPE_NORMAL;
+        return dataList.get(position).getType();
     }
 }

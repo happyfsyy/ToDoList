@@ -5,6 +5,10 @@ public class AlarmItem {
     private String time;
     private String note;
     private boolean isOpen;
+    private int type;
+    public AlarmItem(int type){
+        this.type=type;
+    }
     public AlarmItem(String time,String note,boolean isOpen,long id){
         this(time,note,isOpen);
         this.id=id;
@@ -37,5 +41,11 @@ public class AlarmItem {
     }
     public void setId(long id) {
         this.id = id;
+    }
+    public int getType(){
+        return type;
+    }
+    public void setType(int type){
+        this.type=type;
     }
 }
