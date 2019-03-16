@@ -14,4 +14,5 @@
     <color name="default_text_color">#333333</color>
     <color name="today_color">#E91E63</color>
     <color name="selected_circle_color">#E9A691</color>
+    <color name="transparent_color">#000000</color>
 </resources>

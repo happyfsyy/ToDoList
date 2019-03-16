@@ -26,4 +26,6 @@
     <string name="delete_alarm">删除闹钟</string>
     <string name="alarm_note">备注:</string>
     <string name="new_alarm_note">该记录今天的成果了！</string>
+    <string name="alarm_name">闹钟名</string>
+    <string name="stop">停止</string>
 </resources>

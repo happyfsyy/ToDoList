@@ -3,9 +3,27 @@
     android:orientation="vertical" android:layout_width="match_parent"
     android:layout_height="match_parent">
     <TextView
-        android:textSize="24sp"
-        android:layout_width="wrap_content"
+        android:id="@+id/ring_note"
+        android:textSize="30sp"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_centerInParent="true"
-        android:text="响铃界面！！！！！"/>
+        android:textColor="@color/color_white"
+        android:background="@android:color/transparent"
+        android:gravity="center"/>
+    <Button
+        android:id="@+id/stop_alarm"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/stop"
+        android:layout_centerHorizontal="true"
+        android:layout_alignParentBottom="true"
+        android:layout_marginBottom="20dp"
+        android:textColor="@color/color_white"
+        android:textSize="16sp"
+        android:paddingStart="@dimen/medium_padding"
+        android:paddingTop="@dimen/default_layout_padding"
+        android:paddingBottom="@dimen/default_layout_padding"
+        android:paddingEnd="@dimen/medium_padding"
+        android:background="@drawable/stop_bg"/>
 </RelativeLayout>

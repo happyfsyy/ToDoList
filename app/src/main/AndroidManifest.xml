@@ -1,5 +1,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.example.todolist">
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+
     <application
         android:name=".activity.MyApplication"
         android:allowBackup="true"
@@ -23,7 +25,8 @@
                 <action android:name="com.example.todolist.alarm"/>
             </intent-filter>
         </receiver>
-        <activity android:name=".activity.RingAct"/>
+        <activity android:name=".activity.RingAct"
+            android:theme="@style/transparent"/>
         <service android:name=".receiver.MyService"
             android:enabled="true" android:exported="true">
         </service>

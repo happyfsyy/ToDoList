@@ -1,5 +1,6 @@
 package com.example.todolist.db;
 
+import android.animation.ValueAnimator;
 import android.content.ContentValues;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
@@ -42,6 +43,11 @@ public class AlarmItemDao {
     public static void updateAlarmItem(long id,String time,String note){
         SQLiteDatabase database= helper.getWritableDatabase();
         ContentValues values=DataUtil.getAlarmItemCV(time,note);
+        database.update("AlarmItem",values,"a_id=?",new String[]{id+""});
+    }
+    public static void updateAlarmItem(long id,boolean isOpen){
+        SQLiteDatabase database=helper.getWritableDatabase();
+        ContentValues values=DataUtil.getAlarmItemCV(isOpen);
         database.update("AlarmItem",values,"a_id=?",new String[]{id+""});
     }
 }

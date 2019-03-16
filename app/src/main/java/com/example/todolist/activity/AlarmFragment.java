@@ -6,45 +6,30 @@ import android.app.PendingIntent;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
-import android.content.IntentFilter;
-import android.content.ServiceConnection;
 import android.content.SharedPreferences;
-import android.graphics.Interpolator;
-import android.nfc.tech.MifareUltralight;
 import android.os.Bundle;
-import android.os.IBinder;
-import android.text.Editable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
-import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
-import android.widget.TextView;
 
 import com.example.todolist.R;
 import com.example.todolist.adapter.AlarmAdapter;
+import com.example.todolist.listener.OnToggleClickListener;
 import com.example.todolist.bean.AlarmItem;
-import com.example.todolist.bean.ListItem;
 import com.example.todolist.db.AlarmItemDao;
 import com.example.todolist.listener.AlarmOnItemSelectedListener;
-import com.example.todolist.receiver.AlarmReceiver;
-import com.example.todolist.receiver.MyService;
 import com.example.todolist.utils.DateUtil;
 import com.example.todolist.utils.DisplayUtil;
 import com.example.todolist.utils.LogUtil;
-import com.example.todolist.utils.ToastUtil;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Date;
 import java.util.List;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.appcompat.app.ActionBar;
-import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -62,9 +47,8 @@ public class AlarmFragment extends Fragment {
     public static final int EDIT_ALARM=131;
     public static final int ADD_ALARM=132;
     public static final int DEL_ALARM=133;
-
-    public static final int REQUEST_ALARM=141;
     private Calendar calendar;
+    private Intent intent;
     private PendingIntent pendingIntent;
     private AlarmManager manager;
     @Override
@@ -82,6 +66,7 @@ public class AlarmFragment extends Fragment {
         return mainLayout;
     }
     private void initParams(){
+        manager=(AlarmManager)context.getSystemService(Context.ALARM_SERVICE);
         calendar=Calendar.getInstance();
         preferences=context.getSharedPreferences("list",Context.MODE_PRIVATE);
     }
@@ -119,8 +104,8 @@ public class AlarmFragment extends Fragment {
             public void onItemSelected(int index) {
                 selectedIndex=index;
                 String time=dataList.get(index).getTime();
-                int hour=Integer.parseInt(time.substring(0,2));
-                int minute=Integer.parseInt(time.substring(3,5));
+                int hour=getHour(time);
+                int minute=getMinute(time);
                 LogUtil.e("hour="+hour+"\tminute="+minute);
                 Intent intent=new Intent(context,EditAlarmAct.class);
                 intent.putExtra("requestCode",EDIT_ALARM);
@@ -130,13 +115,32 @@ public class AlarmFragment extends Fragment {
                 startActivityForResult(intent,EDIT_ALARM);
             }
         });
+        adapter.setToggleClickListener(new OnToggleClickListener() {
+            @Override
+            public void onToggleClick(int index) {
+                boolean isOpen=dataList.get(index).isOpen();
+                long id=dataList.get(index).getId();
+                String note=dataList.get(index).getNote();
+                AlarmItemDao.updateAlarmItem(id,!isOpen);
+                dataList.get(index).setOpen(!isOpen);
+                if(isOpen){
+                    cancelAlarm(note,id);
+                }else{
+                    String time=dataList.get(index).getTime();
+                    int hour=getHour(time);
+                    int minute=getMinute(time);
+                    startAlarm(hour,minute,note,id);
+                }
+                adapter.notifyItemChanged(index);
+            }
+        });
     }
     private void initList(){
         if(preferences.getBoolean("isFirst",true)){
             AlarmItem item=new AlarmItem("20:00",getString(R.string.new_alarm_note),true);
             long id=AlarmItemDao.insertAlarmItem(item);
             item.setId(id);
-
+            startAlarm(20,0,item.getNote(),item.getId());
             SharedPreferences.Editor editor=preferences.edit();
             editor.putBoolean("isFirst",false);
             editor.apply();
@@ -168,6 +172,7 @@ public class AlarmFragment extends Fragment {
                 case ADD_ALARM:
                     time= DateUtil.getHourAndMinute(hour,minute);;
                     AlarmItem item=createNormalAlarmItem(time,note);
+                    startAlarm(hour,minute,item.getNote(),item.getId());
                     if(dataList.size()==1&&dataList.get(0).getType()==AlarmAdapter.TYPE_EMPTY){
                         dataList.remove(0);
                         dataList.add(item);
@@ -176,9 +181,6 @@ public class AlarmFragment extends Fragment {
                         dataList.add(item);
                         adapter.notifyItemInserted(dataList.size()-1);
                     }
-                    //todo 创建一个闹钟，开启闹钟程序
-                    LogUtil.e("hour="+hour+"\tminute="+minute);
-                    startAlarm(hour,minute);
                     break;
                 case EDIT_ALARM:
                     if(type== EDIT_ALARM){
@@ -187,7 +189,14 @@ public class AlarmFragment extends Fragment {
                         dataList.get(selectedIndex).setTime(time);
                         dataList.get(selectedIndex).setNote(note);
                         adapter.notifyItemChanged(selectedIndex);
+                        if(dataList.get(selectedIndex).isOpen()) {
+                            //这里根据id会直接覆盖掉原有的闹钟，如果不行，就先cancel这个闹钟，新建一个闹钟
+                            startAlarm(hour, minute, note,dataList.get(selectedIndex).getId());
+                        }
                     }else if(type==DEL_ALARM){
+                        if(dataList.get(selectedIndex).isOpen()){
+                            cancelAlarm(dataList.get(selectedIndex).getNote(),dataList.get(selectedIndex).getId());
+                        }
                         AlarmItemDao.deleteAlarmItem(dataList.get(selectedIndex).getId());
                         dataList.remove(selectedIndex);
                         if(dataList.size()==0){
@@ -210,36 +219,20 @@ public class AlarmFragment extends Fragment {
         long id=AlarmItemDao.insertAlarmItem(item);
         item.setId(id);
         item.setType(AlarmAdapter.TYPE_NORMAL);
-        //todo 因为默认是开的，所以这里要开始实现闹钟功能，如果点击了关闭按钮，再关闭
         return item;
     }
     private AlarmItem createEmptyAlarmItem(){
         AlarmItem item=new AlarmItem(AlarmAdapter.TYPE_EMPTY);
         return item;
     }
-    private ServiceConnection connection=new ServiceConnection() {
-        @Override
-        public void onServiceDisconnected(ComponentName name) {
+    private void startAlarm(int hour,int minute,String note,long a_id){
+        intent=new Intent("com.example.todolist.alarm");
+        intent.putExtra("note",note);
+        intent.setComponent(new ComponentName(context.getPackageName(),context.getPackageName()+".receiver.AlarmReceiver"));
+        intent.setPackage(context.getPackageName());
+        intent.setFlags(Intent.FLAG_INCLUDE_STOPPED_PACKAGES);
 
-        }
-
-        @Override
-        public void onServiceConnected(ComponentName name, IBinder service) {
-
-        }
-    };
-    private void startAlarm(int hour,int minute){
-//        Intent intent=new Intent("com.example.todolist.alarm");
-//        intent.setComponent(new ComponentName(context.getPackageName(),context.getPackageName()+".receiver.AlarmReceiver"));
-//        intent.setPackage(context.getPackageName());
-//        Intent intent=new Intent(context, AlarmReceiver.class);
-//        intent.setFlags(Intent.FLAG_INCLUDE_STOPPED_PACKAGES);
-//        pendingIntent=PendingIntent.getBroadcast(context,REQUEST_ALARM,intent,PendingIntent.FLAG_UPDATE_CURRENT);
-        Intent intent=new Intent(context,MyService.class);
-//        context.startService(intent);
-        context.bindService(intent,connection,Context.BIND_AUTO_CREATE);
-        pendingIntent=PendingIntent.getService(context,REQUEST_ALARM,intent,PendingIntent.FLAG_UPDATE_CURRENT);
-        manager=(AlarmManager)context.getSystemService(Context.ALARM_SERVICE);
+        pendingIntent=PendingIntent.getBroadcast(context,(int)a_id,intent,PendingIntent.FLAG_UPDATE_CURRENT);
         calendar.setTimeInMillis(System.currentTimeMillis());
         calendar.set(Calendar.HOUR_OF_DAY,hour);
         calendar.set(Calendar.MINUTE,minute);
@@ -250,13 +243,24 @@ public class AlarmFragment extends Fragment {
             calendar.add(Calendar.DAY_OF_MONTH,1);
             selectTime=calendar.getTimeInMillis();
         }
-        LogUtil.e("selectTime="+selectTime);
-        LogUtil.e("systemTime="+System.currentTimeMillis());
         long oneDay=24*60*60*1000;
-        manager.setExact(AlarmManager.RTC_WAKEUP,selectTime,pendingIntent);
+        manager.setRepeating(AlarmManager.RTC_WAKEUP,selectTime,oneDay,pendingIntent);
     }
-    private void cancel(){
+    private void cancelAlarm(String note,long a_id){
+        //如果这里不行，就保存一个pendingIntent的list
+        intent=new Intent("com.example.todolist.alarm");
+        intent.putExtra("note",note);
+        intent.setComponent(new ComponentName(context.getPackageName(),context.getPackageName()+".receiver.AlarmReceiver"));
+        intent.setPackage(context.getPackageName());
+        intent.setFlags(Intent.FLAG_INCLUDE_STOPPED_PACKAGES);
+
+        pendingIntent=PendingIntent.getBroadcast(context,(int)a_id,intent,PendingIntent.FLAG_UPDATE_CURRENT);
         manager.cancel(pendingIntent);
     }
-
+    private int getHour(String time){
+        return Integer.parseInt(time.substring(0,2));
+    }
+    private int getMinute(String time){
+        return Integer.parseInt(time.substring(3,5));
+    }
 }

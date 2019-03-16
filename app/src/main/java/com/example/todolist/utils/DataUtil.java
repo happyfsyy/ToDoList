@@ -1,5 +1,6 @@
 package com.example.todolist.utils;
 
+import android.content.ClipData;
 import android.content.ContentValues;
 
 import com.example.todolist.bean.AlarmItem;
@@ -42,6 +43,11 @@ public class DataUtil {
         ContentValues values=new ContentValues();
         values.put("time",time);
         values.put("note",note);
+        return values;
+    }
+    public static ContentValues getAlarmItemCV(boolean isOpen){
+        ContentValues values=new ContentValues();
+        values.put("isOpen",isOpen);
         return values;
     }
 }

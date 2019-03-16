@@ -14,6 +14,6 @@ public class SoftKeyboardUtil {
     }
     public static void showKeyboard(Context context,EditText editText){
         InputMethodManager imm=(InputMethodManager)context.getSystemService(Context.INPUT_METHOD_SERVICE);
-        imm.showSoftInput(editText,0);
+        imm.toggleSoftInput(0,InputMethodManager.HIDE_NOT_ALWAYS);
     }
 }
