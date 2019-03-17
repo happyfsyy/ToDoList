@@ -24,6 +24,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
     private FragmentManager fragmentManager;
     private ListFragment homeFragment;
     private DateFragment calendarFragment;
+    private GraphFragment graphFragment;
     private AlarmFragment alarmFragment;
     private static final String[] FRAGMENT_TAGS=
             new String[]{"homeFragment","calendarFragment","graphFragment","alarmFragment"};
@@ -56,7 +57,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
     private void initListener(){
         homeTab.setOnClickListener(this);
         calendarTab.setOnClickListener(this);
-//        graphTab.setOnClickListener(this);
+        graphTab.setOnClickListener(this);
         alarmTab.setOnClickListener(this);
     }
     private void setTabSelection(int index){
@@ -90,8 +91,12 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
                 savedIndex=2;
                 toolbar.setTitle(getResources().getString(R.string.graph));
                 graphTab.setBackgroundColor(getResources().getColor(R.color.colorSelected));
-                //todo graphFragment
-                ToastUtil.showToast("还没开始做");
+                if(graphFragment==null){
+                    graphFragment=new GraphFragment();
+                    transaction.add(R.id.main_content,graphFragment,FRAGMENT_TAGS[2]);
+                }else{
+                    transaction.show(graphFragment);
+                }
                 break;
             case 3:
             default:
@@ -121,7 +126,9 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         if(calendarFragment!=null){
             transaction.hide(calendarFragment);
         }
-        //todo graphFragment
+        if(graphFragment!=null){
+            transaction.hide(graphFragment);
+        }
         if(alarmFragment!=null){
             transaction.hide(alarmFragment);
         }

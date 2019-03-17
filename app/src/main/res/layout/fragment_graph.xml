@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="match_parent" android:background="@color/color_white">
+    <TextView
+        android:id="@+id/graph_year_month"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:textSize="18sp"
+        android:textColor="@color/default_text_color"
+        android:padding="@dimen/default_inner_padding"
+        android:background="@color/color_white" />
+    <androidx.viewpager.widget.ViewPager
+        android:id="@+id/graph_viewPager"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingTop="@dimen/default_layout_padding"
+        android:paddingBottom="@dimen/default_layout_padding">
+    </androidx.viewpager.widget.ViewPager>
+    <TextView
+        android:id="@+id/graph_evaluation"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textSize="16sp"
+        android:paddingStart="@dimen/default_layout_padding"
+        android:paddingEnd="@dimen/default_layout_padding"
+        android:textColor="@color/day_text_color"/>
+    <TextView
+        android:id="@+id/graph_standard"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingStart="@dimen/default_layout_padding"
+        android:paddingEnd="@dimen/default_layout_padding"
+        android:text="@string/graph_standard"
+        android:textSize="16sp"
+        android:textColor="@color/week_text_color"
+        android:layout_marginTop="@dimen/default_layout_padding"/>
+</LinearLayout>

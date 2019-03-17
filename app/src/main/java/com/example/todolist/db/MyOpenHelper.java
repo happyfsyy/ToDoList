@@ -12,7 +12,7 @@ public class MyOpenHelper extends SQLiteOpenHelper {
             +"content varchar,status integer,time date)";
     private static final String CREATE_DAY_STATUS="create table DayStatus("
             +"f_id integer primary key autoincrement,"
-            +"time date,status integer)";
+            +"time date,status integer,ratio float,year integer,month integer,day integer)";
     private static final String CREATE_ALARM_ITEM="create table AlarmItem("
             +"a_id integer primary key autoincrement,"
             +"time char(5),note varchar,isOpen boolean)";
@@ -32,6 +32,11 @@ public class MyOpenHelper extends SQLiteOpenHelper {
         switch (oldVersion){
             case 1:
                 db.execSQL(CREATE_ALARM_ITEM);
+            case 2:
+                db.execSQL("alter table DayStatus add ratio float");
+                db.execSQL("alter table DayStatus add year integer");
+                db.execSQL("alter table DayStatus add month integer");
+                db.execSQL("alter table DayStatus add day integer");
         }
     }
 }
