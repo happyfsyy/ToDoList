@@ -33,7 +33,9 @@ public class CalendarView extends View {
     private Paint dayPaint;//1、2
     private int dayTextColor=getResources().getColor(R.color.day_text_color);
     private Paint dayStatusBgPaint;//背后的阴影效果，正方形
-    private int dayStatusBgColor=Color.parseColor("#f4f4f4");
+    private int goodColor=getResources().getColor(R.color.graph_red);
+    private int ordinaryColor=getResources().getColor(R.color.graph_green);
+    private int badColor=getResources().getColor(R.color.graph_blue);
     private Paint selectedBgPaint;//圆圈
     private int selectedBgColor=getResources().getColor(R.color.selected_circle_color);
     private int todayColor=getResources().getColor(R.color.today_color);
@@ -88,7 +90,6 @@ public class CalendarView extends View {
 
         dayStatusBgPaint=new Paint(Paint.ANTI_ALIAS_FLAG);
         dayStatusBgPaint.setStyle(Paint.Style.FILL);
-        dayStatusBgPaint.setColor(dayStatusBgColor);
 
         selectedBgPaint=new Paint(Paint.ANTI_ALIAS_FLAG);
         selectedBgPaint.setColor(selectedBgColor);
@@ -117,7 +118,7 @@ public class CalendarView extends View {
         calculateDate();
 
         //画当天状况的背景
-//        drawStatusBg(canvas);
+        drawStatusBg(canvas);
 
         //画selected背景
         drawSelectedBg(canvas);
@@ -193,23 +194,22 @@ public class CalendarView extends View {
     private void drawStatusBg(Canvas canvas){
         calculateStatus();
         for(int i=curMonthStartIndex;i<=curMonthEndIndex;i++){
+            if(status[i]==-1){
+                continue;
+            }
             int row=getRow(i);
             int col=getCol(i);
             float left=leftPadding+col*cellWidth;
             float top=row*cellHeight;
             if(status[i]== DayStatus.BAD){
-                //todo 根据不同的情况，设置不同的背景颜色
-                dayStatusBgPaint.setColor(dayStatusBgColor);
+                dayStatusBgPaint.setColor(badColor);
             }else if(status[i]==DayStatus.ORDINARY){
-
+                dayStatusBgPaint.setColor(ordinaryColor);
             }else if(status[i]==DayStatus.GOOD){
-
-            }else{
-
+                dayStatusBgPaint.setColor(goodColor);
             }
             canvas.drawRect(left,top,left+cellWidth,top+cellHeight,dayStatusBgPaint);
         }
-
     }
     private String getYearAndMonth(Date date){
         calendar.setTime(date);

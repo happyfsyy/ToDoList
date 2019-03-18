@@ -30,5 +30,11 @@
         <service android:name=".receiver.MyService"
             android:enabled="true" android:exported="true">
         </service>
+        <receiver android:name=".receiver.RefreshReceiver"
+            android:exported="true" android:enabled="true" android:priority="1000">
+            <intent-filter>
+                <action android:name="com.example.todolist.refresh"/>
+            </intent-filter>
+        </receiver>
     </application>
 </manifest>

@@ -15,7 +15,7 @@ import java.util.Iterator;
 import java.util.List;
 
 public class AlarmItemDao {
-    private static MyOpenHelper helper=new MyOpenHelper(MyApplication.getContext(),"list.db",null,3);
+    private static MyOpenHelper helper=new MyOpenHelper(MyApplication.getContext(),"list.db",null,4);
     public static long insertAlarmItem(AlarmItem item){
         SQLiteDatabase db=helper.getWritableDatabase();
         ContentValues values= DataUtil.getAlarmItemCV(item);

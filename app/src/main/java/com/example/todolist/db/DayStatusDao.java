@@ -10,17 +10,18 @@ import com.example.todolist.activity.MyApplication;
 import com.example.todolist.bean.DayStatus;
 import com.example.todolist.utils.DataUtil;
 import com.example.todolist.utils.DateUtil;
+import com.example.todolist.utils.LogUtil;
 
 import java.util.Calendar;
 import java.util.Date;
 
 public class DayStatusDao {
-    private static MyOpenHelper dbHelper=new MyOpenHelper(MyApplication.getContext(),"list.db",null,3);
+    private static MyOpenHelper dbHelper=new MyOpenHelper(MyApplication.getContext(),"list.db",null,4);
     private static Calendar calendar=Calendar.getInstance();
-    public static void insertDayStatus(DayStatus dayStatus){
+    public static long insertDayStatus(DayStatus dayStatus){
         SQLiteDatabase database=dbHelper.getWritableDatabase();
         ContentValues values= DataUtil.getDayStatusCV(dayStatus);
-        database.insert("DayStatus",null,values);
+        return database.insert("DayStatus",null,values);
     }
     public static int queryStatus(String time){
         SQLiteDatabase db=dbHelper.getWritableDatabase();
@@ -35,7 +36,7 @@ public class DayStatusDao {
     public static int[] queryMonthStatus(Date date){
         calendar.setTime(date);
         int year=calendar.get(Calendar.YEAR);
-        int month=calendar.get(Calendar.MONTH);
+        int month=calendar.get(Calendar.MONTH)+1;
         //当月天数，记录天数,优秀的，一般的，糟糕的，未记录的，最优秀的那一天，最糟糕的一天
         calendar.add(Calendar.MONTH,1);
         calendar.set(Calendar.DAY_OF_MONTH,0);
@@ -49,6 +50,7 @@ public class DayStatusDao {
             int status=cursor.getInt(cursor.getColumnIndex("status"));
             float ratio=cursor.getFloat(cursor.getColumnIndex("ratio"));
             int day=cursor.getInt(cursor.getColumnIndex("day"));
+            LogUtil.e("day="+day);
             if(ratio>bestRatio){
                 bestRatio=ratio;
                 bestDay=day;

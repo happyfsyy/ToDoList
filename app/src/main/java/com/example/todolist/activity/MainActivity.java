@@ -1,13 +1,20 @@
 package com.example.todolist.activity;
 
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.KeyEvent;
 import android.view.View;
 
 import com.example.todolist.R;
+import com.example.todolist.bean.DayStatus;
+import com.example.todolist.db.DayStatusDao;
+import com.example.todolist.db.ListItemDao;
+import com.example.todolist.receiver.MyService;
 import com.example.todolist.utils.LogUtil;
 import com.example.todolist.utils.ToastUtil;
+
+import java.util.Calendar;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -35,6 +42,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         fragmentManager=getSupportFragmentManager();
+        initLastData();
         initViews();
         initToolbar();
         initListener();
@@ -42,6 +50,30 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
             savedIndex=savedInstanceState.getInt("savedIndex");
         }
         setTabSelection(savedIndex);
+    }
+    private void initLastData(){
+        SharedPreferences preferences=getSharedPreferences("list",MODE_PRIVATE);
+        int lastVisitYear=preferences.getInt("lastVisitYear",0);
+        int lastVisitMonth=preferences.getInt("lastVisitMonth",0);
+        int lastVisitDay=preferences.getInt("lastVisitDay",0);
+        Calendar tempCalendar=Calendar.getInstance();
+        int nowYear=tempCalendar.get(Calendar.YEAR);
+        int nowMonth=tempCalendar.get(Calendar.MONTH)+1;
+        int nowDay=tempCalendar.get(Calendar.DAY_OF_MONTH);
+        if(lastVisitYear!=0){
+            if(lastVisitYear!=nowYear||lastVisitMonth!=nowMonth||lastVisitDay!=nowDay){
+                String time=String.format(getString(R.string.year_month_day_numberic),lastVisitYear,lastVisitMonth,lastVisitDay);
+                DayStatus dayStatus=ListItemDao.updateNoRecord(time);
+                if(dayStatus!=null){
+                    DayStatusDao.insertDayStatus(dayStatus);
+                }
+            }
+        }
+        SharedPreferences.Editor editor=preferences.edit();
+        editor.putInt("lastVisitYear",nowYear);
+        editor.putInt("lastVisitMonth",nowMonth);
+        editor.putInt("lastVisitDay",nowDay);
+        editor.apply();
     }
     private void initViews(){
         toolbar=findViewById(R.id.main_toolbar);
@@ -133,7 +165,6 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
             transaction.hide(alarmFragment);
         }
     }
-
     @Override
     public void onClick(View v) {
         switch (v.getId()){

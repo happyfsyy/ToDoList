@@ -11,8 +11,9 @@ import android.widget.TextView;
 import com.example.todolist.R;
 
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatActivity;
 
-public class RingAct extends BaseActivity{
+public class RingAct extends AppCompatActivity {
     private Button stop;
     private MediaPlayer mediaPlayer;
     private TextView note;
