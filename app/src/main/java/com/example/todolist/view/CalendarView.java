@@ -118,7 +118,7 @@ public class CalendarView extends View {
         calculateDate();
 
         //画当天状况的背景
-        drawStatusBg(canvas);
+//        drawStatusBg(canvas);
 
         //画selected背景
         drawSelectedBg(canvas);

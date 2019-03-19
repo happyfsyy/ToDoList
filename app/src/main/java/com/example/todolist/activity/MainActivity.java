@@ -5,6 +5,8 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.KeyEvent;
 import android.view.View;
+import android.widget.ImageView;
+import android.widget.TextView;
 
 import com.example.todolist.R;
 import com.example.todolist.bean.DayStatus;
@@ -25,9 +27,17 @@ import androidx.fragment.app.FragmentTransaction;
 public class MainActivity extends BaseActivity implements View.OnClickListener {
     private Toolbar toolbar;
     private View homeTab;
+    private ImageView homeImg;
+    private TextView homeText;
     private View calendarTab;
+    private ImageView calendarImg;
+    private TextView calendarText;
     private View graphTab;
+    private ImageView graphImg;
+    private TextView graphText;
     private View alarmTab;
+    private ImageView alarmImg;
+    private TextView alarmText;
     private FragmentManager fragmentManager;
     private ListFragment homeFragment;
     private DateFragment calendarFragment;
@@ -78,9 +88,17 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
     private void initViews(){
         toolbar=findViewById(R.id.main_toolbar);
         homeTab=findViewById(R.id.home_tab);
+        homeImg=findViewById(R.id.home_img);
+        homeText=findViewById(R.id.home_text);
         calendarTab=findViewById(R.id.calendar_tab);
+        calendarImg=findViewById(R.id.calendar_img);
+        calendarText=findViewById(R.id.calendar_text);
         graphTab=findViewById(R.id.graph_tab);
+        graphImg=findViewById(R.id.graph_img);
+        graphText=findViewById(R.id.graph_text);
         alarmTab=findViewById(R.id.alarm_tab);
+        alarmImg=findViewById(R.id.alarm_img);
+        alarmText=findViewById(R.id.alarm_text);
     }
     private void initToolbar(){
         setSupportActionBar(toolbar);
@@ -100,7 +118,8 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
             case 0:
                 savedIndex=0;
                 toolbar.setTitle(getResources().getString(R.string.home));
-                homeTab.setBackgroundColor(getResources().getColor(R.color.colorSelected));
+                homeImg.setImageResource(R.drawable.home2);
+                homeText.setTextColor(getResources().getColor(R.color.colorPrimary));
                 if(homeFragment==null){
                     homeFragment=new ListFragment();
                     transaction.add(R.id.main_content,homeFragment,FRAGMENT_TAGS[0]);
@@ -111,7 +130,8 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
             case 1:
                 savedIndex=1;
                 toolbar.setTitle(getResources().getString(R.string.calendar));
-                calendarTab.setBackgroundColor(getResources().getColor(R.color.colorSelected));
+                calendarImg.setImageResource(R.drawable.calendar2);
+                calendarText.setTextColor(getResources().getColor(R.color.colorPrimary));
                 if(calendarFragment==null){
                     calendarFragment=new DateFragment();
                     transaction.add(R.id.main_content,calendarFragment,FRAGMENT_TAGS[1]);
@@ -122,7 +142,8 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
             case 2:
                 savedIndex=2;
                 toolbar.setTitle(getResources().getString(R.string.graph));
-                graphTab.setBackgroundColor(getResources().getColor(R.color.colorSelected));
+                graphImg.setImageResource(R.drawable.graph2);
+                graphText.setTextColor(getResources().getColor(R.color.colorPrimary));
                 if(graphFragment==null){
                     graphFragment=new GraphFragment();
                     transaction.add(R.id.main_content,graphFragment,FRAGMENT_TAGS[2]);
@@ -134,7 +155,8 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
             default:
                 savedIndex=3;
                 toolbar.setTitle(getResources().getString(R.string.alarm));
-                alarmTab.setBackgroundColor(getResources().getColor(R.color.colorSelected));
+                alarmImg.setImageResource(R.drawable.alarm2);
+                alarmText.setTextColor(getResources().getColor(R.color.colorPrimary));
                 if(alarmFragment==null){
                     alarmFragment=new AlarmFragment();
                     transaction.add(R.id.main_content,alarmFragment,FRAGMENT_TAGS[3]);
@@ -146,10 +168,14 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         transaction.commit();
     }
     private void clearSelection(){
-        homeTab.setBackgroundColor(getResources().getColor(R.color.color_white));
-        calendarTab.setBackgroundColor(getResources().getColor(R.color.color_white));
-        graphTab.setBackgroundColor(getResources().getColor(R.color.color_white));
-        alarmTab.setBackgroundColor(getResources().getColor(R.color.color_white));
+        homeImg.setImageResource(R.drawable.home);
+        homeText.setTextColor(getResources().getColor(R.color.day_text_color));
+        calendarImg.setImageResource(R.drawable.calendar);
+        calendarText.setTextColor(getResources().getColor(R.color.day_text_color));
+        graphImg.setImageResource(R.drawable.graph);
+        graphText.setTextColor(getResources().getColor(R.color.day_text_color));
+        alarmImg.setImageResource(R.drawable.alarm);
+        alarmText.setTextColor(getResources().getColor(R.color.day_text_color));
     }
     private void hideFragments(FragmentTransaction transaction){
         if(homeFragment!=null){

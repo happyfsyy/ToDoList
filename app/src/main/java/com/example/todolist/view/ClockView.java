@@ -126,6 +126,7 @@ public class ClockView extends View {
         canvas.save();
         canvas.rotate(secondAngle);
         RectF secondRectF=new RectF(-secondPointerWidth/2,-circleX+20,secondPointerWidth/2,pointerEndLength);
+        mPaint.setColor(getResources().getColor(R.color.colorPrimary));
         canvas.drawRoundRect(secondRectF,DisplayUtil.dp2px(10),DisplayUtil.dp2px(10),mPaint);
         canvas.restore();
         mPaint.setColor(Color.WHITE);

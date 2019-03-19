@@ -57,7 +57,7 @@ public class WheelView extends View {
 
     private void initPaints(){
         outerTextColor=getResources().getColor(R.color.week_text_color);
-        centerTextColor=Color.BLUE;
+        centerTextColor=getResources().getColor(R.color.colorPrimary);
         lineColor=getResources().getColor(R.color.default_text_color);
         textSize= DisplayUtil.dp2px(16);
         lineWidth=3;
