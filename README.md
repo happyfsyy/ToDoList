@@ -6,7 +6,7 @@
 ![图表](https://raw.githubusercontent.com/happyfsyy/ToDoList/master/screnshots/3.jpg)
 ![闹钟](https://raw.githubusercontent.com/happyfsyy/ToDoList/master/screnshots/4.jpg)
 #### Gif试一试
-![gif]()
+![gif](https://github.com/happyfsyy/ToDoList/raw/master/screnshots/222.gif)
 #### 炫技了
 整个程序没有使用任何第三方开源库，虽说不要重复造轮子，可也得是我自己研究透彻的啊。  
 程序中写了4个自定义View，CalendarView是日历，GraphView是图表，ClockView是时钟，还有WheelView是滚轮，时间选择控件。  
