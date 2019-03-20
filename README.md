@@ -1,6 +1,14 @@
 ### ToDoList  
-#### 项目介绍  
-发现自己有点拖延症，就写了个记录每天要做的事情的APP。
+发现自己有点拖延症，就写了个APP，记录每天要做的事情。
+#### 界面一览
+![首页](https://raw.githubusercontent.com/happyfsyy/ToDoList/master/screnshots/1.jpg)
+![日历](https://raw.githubusercontent.com/happyfsyy/ToDoList/master/screnshots/2.jpg)
+![图表](https://raw.githubusercontent.com/happyfsyy/ToDoList/master/screnshots/3.jpg)
+![闹钟](https://raw.githubusercontent.com/happyfsyy/ToDoList/master/screnshots/4.jpg)
+#### Gif试一试
+#### 炫技了
+整个程序没有使用任何第三方开源库，虽说不要重复造轮子，可也得是我自己研究透彻的啊。  
+程序中写了4个自定义View，CalendarView是日历，GraphView是图表，ClockView是时钟，还有WheelView是滚轮，时间选择控件。  
 #### 项目功能
 1. 首页
     1. 输入完成之后，点击“下一项”自动新建下一个List。
@@ -18,12 +26,5 @@
 5. 闹钟编辑
     1. 可以修改闹钟闹钟名，闹钟时间
     2. 可以删除闹钟。
-#### 界面一览
-![首页](https://raw.githubusercontent.com/happyfsyy/ToDoList/master/screnshots/1.jpg)
-![日历](https://raw.githubusercontent.com/happyfsyy/ToDoList/master/screnshots/2.jpg)
-![图表](https://raw.githubusercontent.com/happyfsyy/ToDoList/master/screnshots/3.jpg)
-![闹钟](https://raw.githubusercontent.com/happyfsyy/ToDoList/master/screnshots/4.jpg)
-#### 炫技了
-整个程序没有使用任何第三方开源库，虽说不要重复造轮子，可也得是我自己研究透彻的啊。  
-程序中包含4个自定义View，CalendarView是日历，GraphView是图表，ClockView是时钟，还有WheelView是滚轮，时间选择控件。  
+
 
