@@ -53,11 +53,12 @@ public class DateAdapter extends RecyclerView.Adapter<DateAdapter.NormalViewHold
         if(itemViewType==ListItem.TYPE_NORMAL){
             int status=dataList.get(position).getStatus();
             String content=dataList.get(position).getContent();
-            //todo 这里根据status的情况，setImageRes，完成未完成
             if(status==ListItem.FINISH){
                 holder.status.setImageResource(R.drawable.finish);
             }else if(status==ListItem.UNFINISH){
                 holder.status.setImageResource(R.drawable.un_finish);
+            }else if(status==ListItem.NO_RECORD){
+                holder.status.setImageResource(R.drawable.circle);
             }
             holder.content.setText(content);
         }

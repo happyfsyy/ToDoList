@@ -2,6 +2,10 @@ package com.example.todolist.activity;
 
 import android.content.Context;
 import android.os.Bundle;
+import android.text.SpannableString;
+import android.text.SpannableStringBuilder;
+import android.text.Spanned;
+import android.text.style.ForegroundColorSpan;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -81,17 +85,43 @@ public class GraphFragment extends Fragment {
             float noRecordPercent=monthParams[5]*1.0f/monthParams[0];
             graphViews[i].setPercent(goodPercent,ordinaryPercent,badPercent,noRecordPercent);
             if(i==1){
+                String evaluation0=String.format(getString(R.string.graph_evaluation0),monthParams[0],monthParams[1],monthParams[5]);
+                String evaluation1=String.format(getString(R.string.graph_evaluation1),monthParams[2]);
+                String evaluation2=String.format(getString(R.string.graph_evaluation2),monthParams[3]);
+                String evaluation3=String.format(getString(R.string.graph_evaluation3),monthParams[4]);
                 if(monthParams[5]==monthParams[0]){
-                    evaluationText.setText(String.format(getString(R.string.graph_evaluation2),monthParams[0],monthParams[1],
-                            monthParams[2],monthParams[3],monthParams[4],monthParams[5]));
+                    SpannableStringBuilder sb1=getSpannableStringBuilder(evaluation0,evaluation1,evaluation2,evaluation3,"","");
+                    evaluationText.setText(sb1);
                 }else{
                     int month=calendar.get(Calendar.MONTH)+1;
-                    evaluationText.setText(String.format(getString(R.string.graph_evaluation),monthParams[0],monthParams[1],
-                            monthParams[2],monthParams[3],monthParams[4],monthParams[5],month,monthParams[6],month,monthParams[7]));
+                    String evaluation4=String.format(getString(R.string.graph_evaluation4),month,monthParams[6]);
+                    String evaluation5=String.format(getString(R.string.graph_evaluation5),month,monthParams[7]);
+                    SpannableStringBuilder sb1=getSpannableStringBuilder(evaluation0,evaluation1,evaluation2,evaluation3,evaluation4,evaluation5);
+                    evaluationText.setText(sb1);
                 }
             }
             calendar.add(Calendar.MONTH,1-i);
         }
+    }
+    private SpannableStringBuilder getSpannableStringBuilder(String evaluation0,String evaluation1,String evaluation2,String evaluation3,String evaluation4,String evaluation5){
+        ForegroundColorSpan colorSpan=new ForegroundColorSpan(getResources().getColor(R.color.colorPrimary));
+        SpannableStringBuilder sb1=new SpannableStringBuilder(evaluation0+evaluation1+evaluation2+evaluation3+evaluation4+evaluation5);
+        sb1.setSpan(colorSpan,evaluation0.length()+11,evaluation0.length()+13, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+        colorSpan=new ForegroundColorSpan(getResources().getColor(R.color.graph_green));
+        sb1.setSpan(colorSpan,evaluation0.length()+evaluation1.length()+2,
+                evaluation0.length()+evaluation1.length()+4, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+        colorSpan=new ForegroundColorSpan(getResources().getColor(R.color.graph_blue));
+        sb1.setSpan(colorSpan,evaluation0.length()+evaluation1.length()+evaluation2.length()+2,
+                evaluation0.length()+evaluation1.length()+evaluation2.length()+4, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+        if(!evaluation4.equals("")){
+            colorSpan=new ForegroundColorSpan(getResources().getColor(R.color.colorPrimary));
+            sb1.setSpan(colorSpan,evaluation0.length()+evaluation1.length()+evaluation2.length()+evaluation3.length()+2,
+                    evaluation0.length()+evaluation1.length()+evaluation2.length()+evaluation3.length()+5,Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+            colorSpan=new ForegroundColorSpan(getResources().getColor(R.color.graph_blue));
+            sb1.setSpan(colorSpan,evaluation0.length()+evaluation1.length()+evaluation2.length()+evaluation3.length()+evaluation4.length(),
+                    evaluation0.length()+evaluation1.length()+evaluation2.length()+evaluation3.length()+evaluation4.length()+3,Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+        }
+        return sb1;
     }
     private void initViewPager(){
         int height=(int)(DisplayUtil.getScreenWidth()*0.5f)+DisplayUtil.dp2px(20);

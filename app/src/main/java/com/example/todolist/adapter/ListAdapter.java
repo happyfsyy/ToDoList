@@ -147,6 +147,7 @@ public class ListAdapter extends RecyclerView.Adapter<ListAdapter.ViewHolder> {
                 holder.content_edit.setText("");
                 holder.content_edit.setVisibility(View.VISIBLE);
                 holder.content_text.setVisibility(View.GONE);
+                holder.status.setImageResource(R.drawable.circle);
                 holder.finish.setVisibility(View.INVISIBLE);
                 holder.unFinish.setVisibility(View.INVISIBLE);
                 break;
@@ -154,6 +155,7 @@ public class ListAdapter extends RecyclerView.Adapter<ListAdapter.ViewHolder> {
                 holder.content_edit.setText(content);
                 holder.content_edit.setVisibility(View.VISIBLE);
                 holder.content_text.setVisibility(View.GONE);
+                holder.status.setImageResource(R.drawable.circle);
                 holder.finish.setVisibility(View.VISIBLE);
                 holder.unFinish.setVisibility(View.VISIBLE);
                 break;

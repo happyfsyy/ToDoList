@@ -2,6 +2,10 @@ package com.example.todolist.activity;
 
 import android.content.Context;
 import android.os.Bundle;
+import android.text.SpannableString;
+import android.text.SpannableStringBuilder;
+import android.text.Spanned;
+import android.text.style.ForegroundColorSpan;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -48,6 +52,8 @@ public class DateFragment extends Fragment {
     private List<ListItem> dataList;
     private DateAdapter dateAdapter;
     private OnItemSelectedListener onItemSelectedListener;
+    private SpannableStringBuilder builder;
+    private ForegroundColorSpan colorSpan;
 
     @Override
     public void onAttach(@NonNull Context context) {
@@ -183,7 +189,14 @@ public class DateFragment extends Fragment {
     private void initHeaderText(Date date){
         String text=DateUtil.getCompareTodayText(date);
         String headerTextString=String.format(getResources().getString(R.string.date_item_header),text);
-        headerText.setText(headerTextString);
+        if(builder==null){
+            builder=new SpannableStringBuilder(headerTextString);
+            colorSpan=new ForegroundColorSpan(getResources().getColor(R.color.colorPrimary));
+        }
+        builder.clear();
+        builder.append(headerTextString);
+        builder.setSpan(colorSpan,7,headerTextString.length()-2, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+        headerText.setText(builder);
     }
     private void initRecyclerView(){
         recyclerView.setLayoutManager(new LinearLayoutManager(context));

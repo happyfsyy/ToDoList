@@ -69,16 +69,25 @@ public class ClockView extends View {
 
     @Override
     protected void onDraw(Canvas canvas) {
+        drawCircle(canvas);
+        drawLines(canvas);
+        canvas.save();
+        canvas.translate(circleX,circleY);
+        drawPointer(canvas);
+        canvas.restore();
+        postInvalidateDelayed(1000);
+    }
+    private void drawCircle(Canvas canvas){
         circleX=width/2;
         circleY=height/2;
         float radius=circleX-mStrokeWidth/2;
         mPaint.setStyle(Paint.Style.STROKE);
         mPaint.setColor(circleColor);
         canvas.drawCircle(circleX,circleY,radius,mPaint);
-
+    }
+    private void drawLines(Canvas canvas){
         for(int i=0;i<60;i++){
             if(i%5==0){
-                //todo setLineColor,setStrokeWidth
                 mPaint.setStrokeWidth(5);
                 mPaint.setColor(longLineColor);
                 canvas.drawLine(circleX,mStrokeWidth/2,circleX,60,mPaint);
@@ -96,11 +105,6 @@ public class ClockView extends View {
             }
             canvas.rotate(6,circleX,circleY);
         }
-        canvas.save();
-        canvas.translate(circleX,circleY);
-        drawPointer(canvas);
-        canvas.restore();
-        postInvalidateDelayed(1000);
     }
     private void drawPointer(Canvas canvas){
         calendar=Calendar.getInstance();

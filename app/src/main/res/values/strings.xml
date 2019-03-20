@@ -33,9 +33,12 @@
     <string name="graph_bad">糟糕:%d%%</string>
     <string name="graph_no_record">未记录:%d%%</string>
     <string name="graph_max_length_text">未记录:100%</string>
-    <string name="graph_evaluation">统计：%n当月总共%d天，总共记录了%d天。%n其中完成状况“优秀”的有%d天，“一般”的有%d天，“糟糕”的有%d天，未记录的有%d天。
-        %n最优秀的是%d月%d日，最糟糕的是%d月%d日</string>
-    <string name="graph_evaluation2">统计：%n当月总共%d天，总共记录了%d天。%n其中完成状况“优秀”的有%d天，“一般”的有%d天，“糟糕”的有%d天，未记录的有%d天。</string>
-    <string name="graph_standard">评价标准：\n按照当日所列的list，完成比率超过90%为优秀，完成比率60%到90%为一般，
-        完成比率在60%以下的为糟糕。</string>
+    <string name="graph_evaluation0">统计：%n当月总共%d天，总共记录了%d天，未记录的有%d天。%n</string>
+    <string name="graph_evaluation1">根据标记情况，其中评价优秀的有%d天；</string>
+    <string name="graph_evaluation2">评价一般的有%d天；</string>
+    <string name="graph_evaluation3">评价糟糕的有%d天。%n</string>
+    <string name="graph_evaluation4"> 评价最优秀的是%d月%d日，</string>
+    <string name="graph_evaluation5">最糟糕的是%d月%d日。</string>
+    <string name="graph_standard">评价标准：\n按照当日所列的list，完成比率超过80%为优秀，完成比率50%到80%为一般，
+        完成比率在50%以下的为糟糕。</string>
 </resources>

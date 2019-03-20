@@ -98,10 +98,10 @@ public class GraphView extends View {
         maxTextHeight=Math.max(iconCircleRadius,maxTextHeight);
     }
     private void initText(){
-        text[0]=String.format(getResources().getString(R.string.graph_good),(int)(goodPercent*100));
-        text[1]=String.format(getResources().getString(R.string.graph_ordinary),(int)(ordinaryPercent*100));
-        text[2]=String.format(getResources().getString(R.string.graph_bad),(int)(badPercent*100));
-        text[3]=String.format(getResources().getString(R.string.graph_no_record),(int)(noRecordPercent*100));
+        text[0]=String.format(getResources().getString(R.string.graph_good),(int)(goodPercent*100+0.5f));
+        text[1]=String.format(getResources().getString(R.string.graph_ordinary),(int)(ordinaryPercent*100+0.5f));
+        text[2]=String.format(getResources().getString(R.string.graph_bad),(int)(badPercent*100+0.5f));
+        text[3]=String.format(getResources().getString(R.string.graph_no_record),(int)(noRecordPercent*100+0.5f));
     }
 
     @Override
@@ -135,17 +135,19 @@ public class GraphView extends View {
         canvas.drawArc(rectF,goodAngle-90,ordinaryAngle,true,arcPaint);
         arcPaint.setColor(badColor);
         canvas.drawArc(rectF,goodAngle+ordinaryAngle-90,badAngle,true,arcPaint);
+//        arcPaint.setColor(getResources().getColor(R.color.graph_gray));
+//        canvas.drawArc(rectF,goodAngle+ordinaryAngle+badAngle-90+30,320-goodAngle-ordinaryAngle-badAngle,true,arcPaint);
     }
     private void drawInnerCircle(Canvas canvas){
         //draw innercircle
-        float innerRaidus=outerRadius/4;
+        float innerRaidus=outerRadius/3;
         circlePaint.setColor(innerBgColor);
         canvas.drawCircle(circleX,circleY,innerRaidus,circlePaint);
     }
     private void drawText(Canvas canvas){
         //todo 如果maxTextWidth+outerRaidus>width，remeasureWidth，重新设置textSize
         float leftX=width-maxTextWidth-leftRightPadding;
-        float topY=(height-4*maxTextHeight)/2;
+        float topY=(height-4*maxTextHeight-3*textSpace)/2;
         float iconCircleX=leftX+iconCircleRadius;
         float iconCircleY=topY+maxTextHeight/2;
         for(int i=0;i<4;i++){

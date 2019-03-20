@@ -13,6 +13,7 @@ import com.example.todolist.bean.DayStatus;
 import com.example.todolist.db.DayStatusDao;
 import com.example.todolist.db.ListItemDao;
 import com.example.todolist.receiver.MyService;
+import com.example.todolist.utils.DateUtil;
 import com.example.todolist.utils.LogUtil;
 import com.example.todolist.utils.ToastUtil;
 
@@ -63,26 +64,19 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
     }
     private void initLastData(){
         SharedPreferences preferences=getSharedPreferences("list",MODE_PRIVATE);
-        int lastVisitYear=preferences.getInt("lastVisitYear",0);
-        int lastVisitMonth=preferences.getInt("lastVisitMonth",0);
-        int lastVisitDay=preferences.getInt("lastVisitDay",0);
+        String lastVisitTime=preferences.getString("lastVisitTime","");
         Calendar tempCalendar=Calendar.getInstance();
-        int nowYear=tempCalendar.get(Calendar.YEAR);
-        int nowMonth=tempCalendar.get(Calendar.MONTH)+1;
-        int nowDay=tempCalendar.get(Calendar.DAY_OF_MONTH);
-        if(lastVisitYear!=0){
-            if(lastVisitYear!=nowYear||lastVisitMonth!=nowMonth||lastVisitDay!=nowDay){
-                String time=String.format(getString(R.string.year_month_day_numberic),lastVisitYear,lastVisitMonth,lastVisitDay);
-                DayStatus dayStatus=ListItemDao.updateNoRecord(time);
+        String todayTime= DateUtil.getYearMonthDayNumberic(tempCalendar.getTime());
+        if(!lastVisitTime.equals("")){
+            if(!lastVisitTime.equals(todayTime)){
+                DayStatus dayStatus=ListItemDao.updateNoRecord(lastVisitTime);
                 if(dayStatus!=null){
                     DayStatusDao.insertDayStatus(dayStatus);
                 }
             }
         }
         SharedPreferences.Editor editor=preferences.edit();
-        editor.putInt("lastVisitYear",nowYear);
-        editor.putInt("lastVisitMonth",nowMonth);
-        editor.putInt("lastVisitDay",nowDay);
+        editor.putString("lastVisitTime",todayTime);
         editor.apply();
     }
     private void initViews(){

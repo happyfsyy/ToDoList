@@ -5,6 +5,7 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Rect;
+import android.graphics.Typeface;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.view.View;
@@ -85,6 +86,7 @@ public class CalendarView extends View {
         weekPaint.setColor(weekTextColor);
 
         dayPaint=new Paint(Paint.ANTI_ALIAS_FLAG);
+        dayPaint.setStyle(Paint.Style.FILL);
         dayPaint.setTextSize(DisplayUtil.sp2px(16));
         dayPaint.setColor(dayTextColor);
 
@@ -118,7 +120,7 @@ public class CalendarView extends View {
         calculateDate();
 
         //画当天状况的背景
-//        drawStatusBg(canvas);
+        drawStatusBg(canvas);
 
         //画selected背景
         drawSelectedBg(canvas);
@@ -141,8 +143,10 @@ public class CalendarView extends View {
                 weekTextX=leftPadding+col*cellWidth+(cellWidth-measureWidth(text,dayPaint))/2f;
                 weekTextY=row*cellHeight+cellHeight/2+dayTextHeight/2;
                 if(todayIndex!=-1&&todayIndex==i){
+                    dayPaint.setTypeface(Typeface.DEFAULT_BOLD);
                     dayPaint.setColor(todayColor);
                 }else{
+                    dayPaint.setTypeface(Typeface.DEFAULT);
                     dayPaint.setColor(dayTextColor);
                 }
                 canvas.drawText(text,weekTextX,weekTextY,dayPaint);

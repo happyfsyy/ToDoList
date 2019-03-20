@@ -31,9 +31,9 @@ public class DataUtil {
         LogUtil.e("year="+year+"\tmonth="+month+"\tday="+day);
         float ratio=finishNum*1.0f/listNum;
         int status;
-        if(ratio>0.9f){
+        if(ratio>=0.8f){
             status=DayStatus.GOOD;
-        }else if(ratio>0.6f){
+        }else if(ratio>=0.5f){
             status=DayStatus.ORDINARY;
         }else{
             status=DayStatus.BAD;

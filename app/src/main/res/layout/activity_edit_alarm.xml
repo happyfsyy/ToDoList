@@ -7,9 +7,10 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentTop="true"
-        android:theme="@style/ThemeOverlay.AppCompat.Light"
+        android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
         app:title="@string/edit_alarm"
-        app:navigationIcon="@drawable/cancel">
+        app:navigationIcon="@drawable/cancel"
+        android:background="@color/colorTheme">
         <ImageView
             android:id="@+id/alarm_confirm"
             android:layout_width="wrap_content"

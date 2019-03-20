@@ -15,9 +15,8 @@
     <color name="today_color">#FF9800</color>
     <color name="selected_circle_color">#F3E6CA</color>
     <color name="transparent_color">#000000</color>
-    <color name="graph_red">#c0359a</color>
-    <color name="graph_yellow">#eacf0e</color>
-    <color name="graph_green">#93bd03</color>
-    <color name="graph_blue">#1798c2</color>
+    <color name="graph_red">#f7b835</color>
+    <color name="graph_green">#99ccff</color>
+    <color name="graph_blue">#cccc00</color>
     <color name="graph_gray">#c3c3c3</color>
 </resources>

@@ -18,22 +18,28 @@
         android:paddingTop="@dimen/default_layout_padding"
         android:paddingBottom="@dimen/default_layout_padding">
     </androidx.viewpager.widget.ViewPager>
-    <TextView
-        android:id="@+id/graph_evaluation"
+    <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:textSize="16sp"
-        android:paddingStart="@dimen/default_layout_padding"
-        android:paddingEnd="@dimen/default_layout_padding"
-        android:textColor="@color/day_text_color"/>
-    <TextView
-        android:id="@+id/graph_standard"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:paddingStart="@dimen/default_layout_padding"
-        android:paddingEnd="@dimen/default_layout_padding"
-        android:text="@string/graph_standard"
-        android:textSize="16sp"
-        android:textColor="@color/week_text_color"
-        android:layout_marginTop="@dimen/default_layout_padding"/>
+        android:layout_height="match_parent">
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="@dimen/default_layout_padding">
+            <TextView
+                android:id="@+id/graph_evaluation"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textSize="16sp"
+                android:textColor="@color/day_text_color"/>
+            <TextView
+                android:id="@+id/graph_standard"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/graph_standard"
+                android:textSize="14sp"
+                android:textColor="@color/week_text_color"
+                android:layout_marginTop="@dimen/default_layout_padding"/>
+        </LinearLayout>
+    </ScrollView>
 </LinearLayout>

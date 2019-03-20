@@ -68,11 +68,11 @@ public class AlarmAdapter extends RecyclerView.Adapter<AlarmAdapter.AlarmViewHol
         viewHolder.toggle.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(dataList.get(viewHolder.getAdapterPosition()).isOpen()){
-                    viewHolder.toggle.setImageResource(R.drawable.toggle_close);
-                }else{
-                    viewHolder.toggle.setImageResource(R.drawable.toggle_open);
-                }
+//                if(dataList.get(viewHolder.getAdapterPosition()).isOpen()){
+//                    viewHolder.toggle.setImageResource(R.drawable.toggle_close);
+//                }else{
+//                    viewHolder.toggle.setImageResource(R.drawable.toggle_open);
+//                }
                 toggleClickListener.onToggleClick(viewHolder.getAdapterPosition());
             }
         });
