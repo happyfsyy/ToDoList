@@ -5,6 +5,7 @@
 ![日历](https://raw.githubusercontent.com/happyfsyy/ToDoList/master/screnshots/2.jpg)
 ![图表](https://raw.githubusercontent.com/happyfsyy/ToDoList/master/screnshots/3.jpg)
 ![闹钟](https://raw.githubusercontent.com/happyfsyy/ToDoList/master/screnshots/4.jpg)
+![闹钟编辑界面](https://raw.githubusercontent.com/happyfsyy/ToDoList/master/screnshots/5.jpg)
 #### Gif试一试
 ![gif](https://github.com/happyfsyy/ToDoList/raw/master/screnshots/222.gif)
 #### 炫技了

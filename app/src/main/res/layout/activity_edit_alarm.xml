@@ -13,11 +13,12 @@
         android:background="@color/colorTheme">
         <ImageView
             android:id="@+id/alarm_confirm"
+            android:padding="@dimen/default_layout_padding"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical|end"
-            android:src="@drawable/confirm"
-            android:layout_marginEnd="@dimen/default_margin" />
+            android:src="@drawable/confirm_bg"
+             />
     </androidx.appcompat.widget.Toolbar>
     <View
         android:id="@+id/single_line"
