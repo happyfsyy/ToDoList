@@ -90,14 +90,16 @@ public class GraphFragment extends Fragment {
                 String evaluation2=String.format(getString(R.string.graph_evaluation2),monthParams[3]);
                 String evaluation3=String.format(getString(R.string.graph_evaluation3),monthParams[4]);
                 if(monthParams[5]==monthParams[0]){
-                    SpannableStringBuilder sb1=getSpannableStringBuilder(evaluation0,evaluation1,evaluation2,evaluation3,"","");
-                    evaluationText.setText(sb1);
+//                    SpannableStringBuilder sb1=getSpannableStringBuilder(evaluation0,evaluation1,evaluation2,evaluation3,"","");
+                    String text=evaluation0+evaluation1+evaluation2+evaluation3;
+                    evaluationText.setText(text);
                 }else{
                     int month=calendar.get(Calendar.MONTH)+1;
                     String evaluation4=String.format(getString(R.string.graph_evaluation4),month,monthParams[6]);
                     String evaluation5=String.format(getString(R.string.graph_evaluation5),month,monthParams[7]);
-                    SpannableStringBuilder sb1=getSpannableStringBuilder(evaluation0,evaluation1,evaluation2,evaluation3,evaluation4,evaluation5);
-                    evaluationText.setText(sb1);
+//                    SpannableStringBuilder sb1=getSpannableStringBuilder(evaluation0,evaluation1,evaluation2,evaluation3,evaluation4,evaluation5);
+                    String text=evaluation0+evaluation1+evaluation2+evaluation3+evaluation4+evaluation5;
+                    evaluationText.setText(text);
                 }
             }
             calendar.add(Calendar.MONTH,1-i);

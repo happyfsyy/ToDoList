@@ -12,11 +12,11 @@
     <color name="day_text_color">#333333</color>
     <color name="week_text_color">#767676</color>
     <color name="default_text_color">#111111</color>
-    <color name="today_color">#FF9800</color>
+    <color name="today_color">#f7b835</color>
     <color name="selected_circle_color">#F3E6CA</color>
     <color name="transparent_color">#000000</color>
     <color name="graph_red">#f7b835</color>
-    <color name="graph_green">#99ccff</color>
-    <color name="graph_blue">#cccc00</color>
-    <color name="graph_gray">#c3c3c3</color>
+    <color name="graph_green">#ffffcc</color>
+    <color name="graph_blue">#99cc99</color>
+    <color name="graph_gray">#cccccc</color>
 </resources>

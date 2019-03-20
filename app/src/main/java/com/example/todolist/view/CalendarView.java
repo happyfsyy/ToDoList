@@ -34,6 +34,7 @@ public class CalendarView extends View {
     private Paint dayPaint;//1、2
     private int dayTextColor=getResources().getColor(R.color.day_text_color);
     private Paint dayStatusBgPaint;//背后的阴影效果，正方形
+    private Paint dayStatusPointPaint;
     private int goodColor=getResources().getColor(R.color.graph_red);
     private int ordinaryColor=getResources().getColor(R.color.graph_green);
     private int badColor=getResources().getColor(R.color.graph_blue);
@@ -93,6 +94,9 @@ public class CalendarView extends View {
         dayStatusBgPaint=new Paint(Paint.ANTI_ALIAS_FLAG);
         dayStatusBgPaint.setStyle(Paint.Style.FILL);
 
+        dayStatusPointPaint=new Paint(Paint.ANTI_ALIAS_FLAG);
+        dayStatusPointPaint.setColor(getResources().getColor(R.color.graph_gray));
+
         selectedBgPaint=new Paint(Paint.ANTI_ALIAS_FLAG);
         selectedBgPaint.setColor(selectedBgColor);
 
@@ -119,11 +123,13 @@ public class CalendarView extends View {
         //计算42个数据
         calculateDate();
 
-        //画当天状况的背景
-        drawStatusBg(canvas);
-
         //画selected背景
         drawSelectedBg(canvas);
+
+        //画当天状况的背景
+//        drawStatusBg(canvas);
+        drawPointBg(canvas);
+
 
         //画1到31号
         String curYearAndMonth=getYearAndMonth(curMonthDate);
@@ -213,6 +219,19 @@ public class CalendarView extends View {
                 dayStatusBgPaint.setColor(goodColor);
             }
             canvas.drawRect(left,top,left+cellWidth,top+cellHeight,dayStatusBgPaint);
+        }
+    }
+    private void drawPointBg(Canvas canvas){
+        calculateStatus();
+        for(int i=curMonthStartIndex;i<=curMonthEndIndex;i++){
+            if(status[i]==-1){
+                continue;
+            }
+            int row=getRow(i);
+            int col=getCol(i);
+            float cx=leftPadding+col*cellWidth+0.5f*cellWidth;
+            float cy=(row+1)*cellHeight-DisplayUtil.dp2px(5);
+            canvas.drawCircle(cx,cy,DisplayUtil.dp2px(3),dayStatusPointPaint);
         }
     }
     private String getYearAndMonth(Date date){
