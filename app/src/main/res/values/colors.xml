@@ -17,6 +17,6 @@
     <color name="transparent_color">#000000</color>
     <color name="graph_red">#f7b835</color>
     <color name="graph_green">#ffffcc</color>
-    <color name="graph_blue">#99cc99</color>
+    <color name="graph_blue">#99ccff</color>
     <color name="graph_gray">#cccccc</color>
 </resources>
