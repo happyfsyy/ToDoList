@@ -74,13 +74,15 @@ public class CalendarView extends View {
         cellHeight=cellWidth*0.8f;
 
         calculateStartEndIndex();
-        if(curMonthEndIndex<28){
-            height=(int)(cellHeight*5);
-        }else if(curMonthEndIndex<35){
-            height=(int)(cellHeight*6);
-        }else{
-            height=(int)(cellHeight*7);
-        }
+//        if(curMonthEndIndex<28){
+//            height=(int)(cellHeight*5);
+//        }else if(curMonthEndIndex<35){
+//            height=(int)(cellHeight*6);
+//        }else{
+//            height=(int)(cellHeight*7);
+//        }
+        height=(int)(cellHeight*7);
+
 
         weekPaint=new Paint(Paint.ANTI_ALIAS_FLAG);
         weekPaint.setTextSize(DisplayUtil.sp2px(16));
